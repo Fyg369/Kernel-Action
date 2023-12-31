@@ -1,0 +1,79 @@
+name: ci
+on:
+  watch:
+    types: [started]
+
+  workflow_dispatch:
+  
+jobs:
+  yaml-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+       node-version: 20
+
+    - name: Imstall yamllint
+      run: sudo npm i -g yaml-lint
+
+    - name: Check yaml
+      run: /usr/local/lib/node_modules/yaml-lint/dist/cli.js action.yml
+
+  ci-mmp:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - os: ubuntu-latest
+          id: x64
+
+        - os: ubuntu-20.04
+          id: x64
+          
+    needs: yaml-check
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: Mmp CI
+      uses: Fyg369/Kernel-Action@main
+      with: 
+          kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
+          kernel-dir: mmp
+          branch: mcd-OOS-R
+          config: mcd_ksu_defconfig
+          arch: arm64
+          aosp-gcc: true
+          aosp-clang: false
+          other-clang: true
+          other-clang-url: https://github.com/kdrag0n/proton-clang
+          other-clang-branch: master
+          ksu: true
+          ksu-version: main
+          android-version: 12
+          aosp-clang-version: r383902
+          python-27: true
+          disable-lto: true
+          disable_fst: false
+          disable_cc_werror: true
+          kprobes: false
+          overlayfs: true
+          lxc: true
+          lxc-patch: false          
+          nethunter: true
+          nethunter-patch: true
+          bbrplus: true
+          ccache: true
+          anykernel3: true
