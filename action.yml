@@ -371,10 +371,10 @@ runs:
              mkdir -p -v out
              export CLANG_PATH=$HOME/clang
              export PATH=$CLANG_PATH/bin:$PATH
-             export LLVM=1
-             export ARCH=arm64
-             export SUBARCH=arm64
-             export BUILD_INITRAMFS=1
+            #export LLVM=1
+            #export ARCH=arm64
+            #export SUBARCH=arm64
+            #export BUILD_INITRAMFS=1
              make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.config }}
              if [ ${{ inputs.ccache }} = true ]; then
                  export USE_CCACHE=1
@@ -388,10 +388,10 @@ runs:
              mkdir -p -v out
              export CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64
              export PATH=$CLANG_PATH/bin:$PATH
-             export LLVM=1
-             export ARCH=arm64
-             export SUBARCH=arm64
-             export BUILD_INITRAMFS=1
+            #export LLVM=1
+            #export ARCH=arm64
+            #export SUBARCH=arm64
+            #export BUILD_INITRAMFS=1
              make -j$(nproc --all) CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm- CLANG_TRIPLE=aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.config }}
              if [ ${{ inputs.ccache }} = true ]; then
                  export USE_CCACHE=1
@@ -405,10 +405,10 @@ runs:
              mkdir -p -v out
              export CLANG_PATH=$HOME/clang
              export PATH=$CLANG_PATH/bin:$PATH
-             export LLVM=1
-             export ARCH=arm64
-             export SUBARCH=arm64
-             export BUILD_INITRAMFS=1
+            #export LLVM=1
+            #export ARCH=arm64
+            #export SUBARCH=arm64
+            #export BUILD_INITRAMFS=1
              make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.config }}
              if [ ${{ inputs.ccache }} = true ]; then
                  export USE_CCACHE=1
