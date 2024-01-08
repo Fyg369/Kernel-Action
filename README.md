@@ -88,7 +88,6 @@ android-ndk-version | false | | r23b |
 android-ndk-x64 | false | If use the ndk version <r23,please enable it. | false | 
 | python-27 | false | Use python2.7 instead of python3, this is helpful for some kernel compilations | false |
 | anykernel3 | false | Package the compiled kernel using anykernel3. If this option is disabled, You need to fill in the two values `fmt` and `bootimg-url`. | false |
-| fmt | false | Kernel compression format, default is Image | Image.gz |
 | bootimg-url | false | A URL that can download the local boot.img | https://127.0.0.1/boot.img |
 | extra-cmd | false | Compile the kernel with extra options, such as LD=ld.lld | AS=llvm-as |
 
@@ -98,7 +97,7 @@ android-ndk-x64 | false | If use the ndk version <r23,please enable it. | false 
 
 - Improve testing process
 
-- Automatic detection of kernel compression format
+- Provide patching function for kernel version less than or equal to 4.14 without any ksu hook modification
 
 - Modify unreasonable options
 
