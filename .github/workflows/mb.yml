@@ -75,9 +75,9 @@ jobs:
       uses: Fyg369/Kernel-Action@main
       with:
           extra-cmd: chmod +x $(pwd)/dtc/dtc && DTC_EXT=$(pwd)/dtc/dtc
-          kernel-url: https://github.com/Grill-Laux/OOS_kernel_oneplus_sdm845
+          kernel-url: https://github.com/uwu-gl/kernel_oneplus_sdm845
           kernel-dir: mb
-          branch: Android_11_basic
+          branch: oos/wip-upstream
           config: sdm845-perf_defconfig
           arch: arm64
           aosp-gcc: true
