@@ -18,14 +18,14 @@ inputs:
   kernel-dir:
     required: false
     default: kernel
-  vendor:
-    required: false
-    default: false
   vendor-dir:
     required: false
     default: vendor
-  branch:
+  kernel-branch:
     description: 'Branch name'
+    required: false
+    default: main
+  vendor-branch:
     required: false
     default: main
   config:
@@ -55,16 +55,16 @@ inputs:
     description: 'Enable kprobes for ksu'
     required: false
     default: false
-  ksu-lkm:
-    description: "Build KernelSU as a linux kernel module"
-    required: false
-    default: false
   disable_fst:
     description: 'Disable FST configs for configs.'
     required: false
     default: false  
   disable_cc_werror:
     description: 'Disable CC_WERROR configs for configs.'
+    required: false
+    default: false
+  bbrplus:
+    description: 'Enable bbrplus and docker configs for configs.'
     required: false
     default: false
   disable-lto:
@@ -85,10 +85,6 @@ inputs:
     default: false
   nethunter-patch:
     description: 'patch config'
-    required: false
-    default: false
-  bbrplus:
-    description: 'Enable bbrplus and docker configs for configs.'
     required: false
     default: false
   kvm:
@@ -289,26 +285,34 @@ runs:
          fi
 
          echo "::group:: Pulling Kernel Source"
-         git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.branch }}" --depth=${{ inputs.depth }} kernel/${{ inputs.kernel-dir }}
+         git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.kernel-branch }}" --depth=${{ inputs.depth }} kernel/${{ inputs.kernel-dir }}
          echo "::endgroup::"
 
-         if [ ${{ inputs.vendor }} = true ]; then
+         if [ ! -z  "${{ inputs.vendor-url }}" ]; then
              echo "::group:: Pulling Kernel vendor source"
-             git clone ${{ inputs.vendor-url }} --depth=${{ inputs.depth }} kernel/${{ inputs.vendor-dir }}
+             git clone ${{ inputs.vendor-url }} --depth=${{ inputs.depth }} kernel/${{ inputs.vendor-dir }} -b ${{ inputs.vendor-branch }}
              test -d kernel/${{ inputs.vendor-dir }}/vendor && cp -rv kernel/${{ inputs.vendor-dir }}/vendor kernel
              test -d kernel/${{ inputs.vendor-dir }}/vendor && cp -rv kernel/${{ inputs.vendor-dir }}/vendor ./
              echo "::endgroup::"
          fi
-
+         
          cd kernel/${{ inputs.kernel-dir }}
          export SUBLEVEL=$(cat Makefile | grep "PATCHLEVEL =" | awk '{print $3}')
+         function version_gt() { test "$(echo -e "$1\n$2" | sort -V | tail -n1)" == "$1"; }
 
          if [ ${{ inputs.ksu }} = true ]; then
             echo "::group:: Initializing KernelSU"
             if [ -f KernelSU/kernel/Kconfig ]; then
                 echo "KernelSU has been initialized,skipped."
             else
-                curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
+                if [[ "${{ inputs.ksu-version }}" == "main" ]] || version_gt "${{ inputs.ksu-version }}" "v0.9.5"; then
+                    echo "Warning: The KernelSU version you selected was detected to be ${{ inputs.ksu-version }}, but KernelSU has dropped support for the non-gki kernel since 0.9.5. 
+                    This will force switch to v0.9.5."
+                    export KVER=v0.9.5
+                else
+                    export KVER=${{ inputs.ksu-version }}
+                fi
+                    curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s "$KVER"
             fi
             if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
                 echo "CONFIG_KPROBES is enabled, skip patch."
@@ -440,7 +444,7 @@ runs:
          fi
          echo "::endgroup::"
 
-         unset USE_CCACHE CLANG_TRIPLE COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL
+         unset USE_CCACHE CLANG_TRIPLE COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER
 
          if [ ${{ inputs.anykernel3 }} = false ]; then
             echo "::group:: Preparing to Upload boot.img"
@@ -476,10 +480,10 @@ runs:
                 git clone ${{ inputs.anykernel3-url }} AnyKernel3
             else
                 git clone https://github.com/osm0sis/AnyKernel3
+                sed -i 's!BLOCK=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;!BLOCK=auto;!g' AnyKernel3/anykernel.sh
+                sed -i 's/do.devicecheck=1/do.devicecheck=0/g' AnyKernel3/anykernel.sh
+                sed -i 's/is_slot_device=0;/IS_SLOT_DEVICE=auto;/g' AnyKernel3/anykernel.sh
             fi
-            sed -i 's!block=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;!block=auto;!g' AnyKernel3/anykernel.sh
-            sed -i 's/do.devicecheck=1/do.devicecheck=0/g' AnyKernel3/anykernel.sh
-            sed -i 's/is_slot_device=0;/is_slot_device=auto;/g' AnyKernel3/anykernel.sh
 
             if [ -f out/arch/${{ inputs.arch }}/boot/Image.*-dtb ]; then
                 cp out/arch/${{ inputs.arch }}/boot/Image.*-dtb AnyKernel3/ -rv
