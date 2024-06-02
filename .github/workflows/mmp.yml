@@ -76,7 +76,7 @@ jobs:
       with:
           kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
           kernel-dir: mmp
-          branch: mcd-OOS-R
+          kernel-branch: mcd-OOS-R
           config: mcd_ksu_defconfig
           arch: arm64
           aosp-gcc: true
