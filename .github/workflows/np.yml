@@ -76,7 +76,7 @@ jobs:
       with:
           kernel-url: https://github.com/Fyg369/android_kernel_oneplus6
           kernel-dir: np
-          branch: development
+          kernel-branch: development
           config: nethunter_ksu_defconfig
           arch: arm64
           aosp-gcc: true
