@@ -72,7 +72,7 @@ jobs:
 
     steps:
     - name: Mmp CI
-      uses: ./
+      uses: Fyg369/Kernel-Action@main
       with:
           kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
           kernel-dir: mmp
