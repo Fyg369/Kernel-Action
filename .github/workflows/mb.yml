@@ -94,6 +94,6 @@ jobs:
           lxc: true
           nethunter: true
           nethunter-patch: true
-          bbrplus: true
+          bbrplus: false
           ccache: true
           anykernel3: true
