@@ -83,7 +83,7 @@ jobs:
           aosp-clang: false
           other-clang-url: https://github.com/kdrag0n/proton-clang
           other-clang-branch: master
-          ksu: true
+          ksu: false
           ksu-version: main
           android-version: 12
           aosp-clang-version: r383902
