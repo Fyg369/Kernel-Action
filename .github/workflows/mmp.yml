@@ -68,7 +68,7 @@ jobs:
       - sh-check
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
     - name: Mmp CI
