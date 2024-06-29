@@ -51,6 +51,10 @@ inputs:
     description: 'KernelSU default branch'
     required: false
     default: "main"
+  ksu-lkm:
+    description: "Build KernelSU as a loadable kernel module"
+    required: false
+    default: false
   kprobes:
     description: 'Enable kprobes for ksu'
     required: false
@@ -167,16 +171,10 @@ runs:
              exit 127
          fi
 
-         if [ ${GITHUB_ACTIONS} = "true" ]; then
-             echo "::group:: Cleaning up"
-             test -f /bin/docker && docker rmi -f $(docker images -q)
-             aria2c -q https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh && NONINTERACTIVE=1 bash ./uninstall.sh -f -q
-             echo "::endgroup::"
-         fi
-
          echo "::group:: Installing Building Depend Packages"
          sudo apt-get update
-         sudo apt-get install --no-install-recommends -y binutils binutils-aarch64-linux-gnu binutils-arm-linux-gnueabi git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python3 aria2
+         sudo apt-get install --no-install-recommends -y binutils binutils-aarch64-linux-gnu binutils-arm-linux-gnueabi git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python3 aria2
+         aria2c -q https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh && NONINTERACTIVE=1 bash ./uninstall.sh -f -q
          echo "::endgroup::"
 
          if [ -f /bin/swapon ]; then
@@ -256,7 +254,7 @@ runs:
          if [ ${{ inputs.python-27 }} = true ]; then
              echo "::group:: Installing Python2.7 instead Python3"
              if ! sudo apt-cache search python2.7 | grep -i python2.7 >>/dev/null; then
-                 echo "deb https://deb.debian.org/debian/ bullseye main contrib non-free" | sudo tee -a /etc/apt/sources.list >/dev/null
+                 echo "deb [trusted=yes] https://deb.debian.org/debian/ bullseye main contrib non-free" | sudo tee -a /etc/apt/sources.list >/dev/null
                  sudo apt-get update
              fi
              sudo apt-get install -y python2.7 python2.7-minimal
@@ -264,7 +262,7 @@ runs:
              test -f /bin/python || sudo ln -v -s /bin/python2.7 /bin/python
              test -f /bin/python2 || sudo ln -v -s /bin/python2.7 /bin/python2
              echo "::endgroup::"
-             grep -i "bullseye" /etc/apt/sources.list && sudo sed '$d' /etc/apt/sources.list >>/dev/null
+             grep -i "bullseye" /etc/apt/sources.list >>/dev/null && sudo sed '$d' /etc/apt/sources.list >>/dev/null
          fi
 
          if [ ${{ inputs.aosp-clang }} = true ]; then
@@ -295,7 +293,7 @@ runs:
              test -d kernel/${{ inputs.vendor-dir }}/vendor && cp -rv kernel/${{ inputs.vendor-dir }}/vendor ./
              echo "::endgroup::"
          fi
-         
+
          cd kernel/${{ inputs.kernel-dir }}
          export SUBLEVEL=$(cat Makefile | grep "PATCHLEVEL =" | awk '{print $3}')
          function version_gt() { test "$(echo -e "$1\n$2" | sort -V | tail -n1)" == "$1"; }
@@ -314,10 +312,19 @@ runs:
                 fi
                     curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s "$KVER"
             fi
-            if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
-                echo "CONFIG_KPROBES is enabled, skip patch."
+            if [ ${{ inputs.ksu-lkm }} = true ]; then
+                if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
+                    sed -i 's/CONFIG_KSU=y/CONFIG_KSU=m/g' "arch/${{ inputs.arch }}/configs/${{ inputs.config }}"
+                else
+                    #echo "CONFIG_KSU=m" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }}
+                    sed -i '/config KSU/,/help/{s/default y/default m/}' common/drivers/kernelsu/Kconfig
+                fi
             else
-                curl -SsL https://github.com/Fyg369/Kernel-Action/raw/main/ksupatch.sh | bash
+                if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
+                    echo "CONFIG_KPROBES is enabled, skip patch."
+                else
+                    curl -SsL https://github.com/Fyg369/Kernel-Action/raw/main/ksupatch.sh | bash
+                fi
             fi
             echo "::endgroup::"
          fi
@@ -412,7 +419,6 @@ runs:
              echo "::endgroup::"
          fi
 
-         export A=$(date +%s)
          echo "::group:: Building Kernel with selected cross compiler"
          mkdir out -p -v
          if [ ${{ inputs.android-ndk }} = true ]; then
