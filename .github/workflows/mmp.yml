@@ -91,7 +91,6 @@ jobs:
           disable-lto: true
           disable_cc_werror: true
           lxc: true
-          apatch: true
           nethunter: true
           nethunter-patch: true
           bbrplus: true
