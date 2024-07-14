@@ -11,17 +11,18 @@ jobs:
       fail-fast: false
       matrix:
         check: [yaml, shellcheck, shfmt]
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Install Node.js
+      - name: Set up Node.js
         if: matrix.check == 'yaml'
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install YAML Lint
+      - name: Install dependencies
         if: matrix.check == 'yaml'
         run: npm install yaml-lint
 
@@ -33,11 +34,13 @@ jobs:
         if: matrix.check == 'shellcheck'
         uses: ludeeus/action-shellcheck@2.0.0
 
+      - name: Install aria2
+        if: matrix.check == 'shfmt'
+        run: sudo apt-get update && sudo apt-get install -y aria2
+
       - name: Download and Run shfmt
         if: matrix.check == 'shfmt'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y aria2
           SHFMT_VERSION=v3.8.0
           case $(dpkg --print-architecture) in
             armv7* | armv8l | armhf | arm) ARCH=arm ;;
@@ -61,6 +64,9 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
       - name: Mmp CI
         uses: Fyg369/Kernel-Action@main
         with:
@@ -86,3 +92,6 @@ jobs:
           bbrplus: true
           ccache: true
           anykernel3: true
+
+      - name: Clean Workspace
+        run: git clean -dxf
