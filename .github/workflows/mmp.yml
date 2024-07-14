@@ -73,6 +73,7 @@ jobs:
     - name: Mmp CI
       uses: Fyg369/Kernel-Action@main
       with:
+        # extra-cmd: chmod +x $(pwd)/dtc/dtc && DTC_EXT=$(pwd)/dtc/dtc
           kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
           kernel-dir: mmp
           kernel-branch: mcd-OOS-R
