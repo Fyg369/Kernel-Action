@@ -39,10 +39,6 @@ inputs:
     description: 'Android version.'
     required: true
     default: 12
-  apatch:
-    description: 'APatch function support'
-    required: false
-    default: false
   ksu:
     description: 'KernelSU function support'
     required: false
@@ -160,7 +156,7 @@ runs:
       if: inputs.ccache == 'true'
       uses: hendrikmuhs/ccache-action@v1.2
       with:
-        key: build-kernel-${{ inputs.arch }}${{ inputs.config }}
+        key: ${{ inputs.config }}-0cb68f9cbcbb3de9c966cf66ed51471fbe51419e
         max-size: 4G
 
     - name: Build Kernel
@@ -336,8 +332,8 @@ runs:
              if [ ${{ inputs.nethunter-patch }} = true ]; then
                  aria2c https://github.com/tomxi1997/kali-nethunter_patches/raw/main/add-rtl88xxau-5.6.4.2-drivers.patch
                  git apply add-rtl88xxau-5.6.4.2-drivers.patch
-                #aria2c https://github.com/tomxi1997/kali-nethunter_patches/raw/main/add-wifi-injection.patch
-                #git apply add-wifi-injection.patch
+                 #aria2c https://github.com/tomxi1997/kali-nethunter_patches/raw/main/add-wifi-injection.patch
+                 #git apply add-wifi-injection.patch
                  aria2c https://github.com/tomxi1997/kali-nethunter_patches/raw/main/fix-ath9k-naming-conflict.patch
                  git apply fix-ath9k-naming-conflict.patch
                  if [ "$SUBLEVEL" -lt "19" ]; then
@@ -357,18 +353,6 @@ runs:
              echo "::endgroup::"
          else
              echo "skip patch"
-         fi
-
-         if [ ${{ inputs.apatch }} = true ]; then
-             echo "::group:: Initializing Apatch"
-             mkdir drivers/apatch
-             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/apatch/Kconfig -o drivers/apatch/Kconfig
-             grep -q "apatch" || sed -i "/endmenu/i\\source \"drivers/apatch/Kconfig\"" drivers/Kconfig
-             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/apatch/module_fix.patch
-             git apply module_fix.patch
-             echo "CONFIG_APATCH_SUPPORT=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-             echo "CONFIG_APATCH_FIX_MODULES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-             echo "CONFIG_APATCH_CUSTOMS=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
          fi
 
          if [ ${{ inputs.disable-lto }} = true ]; then
@@ -426,26 +410,24 @@ runs:
              export PATH=$CLANG_PATH/bin:$PATH
              if [ ${{ inputs.ccache }} = true ]; then
                  export USE_CCACHE=1
-                 make -j$(nproc --all) CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm- CLANG_TRIPLE=aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))- CC="ccache clang" ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }}
+                 make -j$(nproc --all) CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm- CLANG_TRIPLE=aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))- CC="ccache clang" ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
              else
-                 make -j$(nproc --all) CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm- CLANG_TRIPLE=aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }}
+                 make -j$(nproc --all) CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm- CLANG_TRIPLE=aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
              fi
          elif [ ${{ inputs.android-ndk }} = false ] && [ ${{ inputs.aosp-gcc }} = true ]; then
              export CLANG_PATH=$HOME/clang
              export PATH=$CLANG_PATH/bin:$PATH
-             make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.config }}
              if [ ${{ inputs.ccache }} = true ]; then
                  export USE_CCACHE=1
-                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC="ccache clang" ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }}
+                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC="ccache clang" ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
              else
-                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }}
+                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
              fi
-         else    
-             make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- ARCH=${{ inputs.arch }} O=out ${{ inputs.config }}
+         else
              if [ ${{ inputs.ccache }} = true ]; then
-                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CC="ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc" ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }} 
+                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CC="ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc" ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
              else
-                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }} 
+                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
              fi
          fi
          echo "::endgroup::"
