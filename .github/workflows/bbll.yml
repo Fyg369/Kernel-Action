@@ -1,4 +1,4 @@
-name: bl
+name: mmp
 on:
   watch:
     types: [started]
@@ -10,20 +10,16 @@ jobs:
     permissions:
       contents: write
     steps:
-
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-         node-version: 20
+      - name: Setup Node.js
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nodejs npm
 
-      - name: Install dependence
-        run: 
-             sudo apt-get update
-             sudo apt-get install -y nodejs npm
-             sudo npm install -g yaml-lint
+      - name: Install yaml-lint
+        run: sudo npm install -g yaml-lint
 
       - name: Check yaml
         run: yaml-lint action.yml
@@ -40,24 +36,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
       - name: ShellCheck lint
         if: matrix.lint == 'shellcheck'
         uses: ludeeus/action-shellcheck@2.0.0
 
-      - name: shfmt lint
+      - name: Download and Run shfmt
         if: matrix.lint == 'shfmt'
         run: |
-            export HOST_ARCH=$(dpkg --print-architecture)
-            case ${HOST_ARCH} in
-                armv7* | armv8l | armhf | arm) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_arm -o shfmt ;;
-                i*86 | x86) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_x86 -o shfmt ;;
-                amd64 | x86_64) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64 -o shfmt ;;
-                aarch64 | arm64) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_arm64 -o shfmt ;;
-
-                *) echo "Unknow cpu architecture for this device !" && exit 1 ;;
-            esac
-            chmod 755 -R ./shfmt
-            ./shfmt -w -i 2 ksupatch.sh
+          wget -qO shfmt "https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_$(dpkg --print-architecture)"
+          chmod +x shfmt
+          ./shfmt -w -i 2 ksupatch.sh
 
       - name: Clean Workspace
         run: git clean -dxf
@@ -73,9 +62,9 @@ jobs:
       contents: read
 
     steps:
-    - name: Mmp CI
-      uses: Fyg369/Kernel-Action@main
-      with:
+      - name: Mmp CI
+        uses: Fyg369/Kernel-Action@main
+        with:
           kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
           kernel-dir: mmp
           kernel-branch: mcd-OOS-R
