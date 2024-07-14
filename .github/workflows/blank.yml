@@ -1,4 +1,4 @@
-name: ci
+name: mmp
 on:
   watch:
     types: [started]
@@ -13,15 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Node.js and YAML Lint
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - run: npm install -g yaml-lint
+      - name: Install YAML Lint
+        run: npm install yaml-lint
 
       - name: Lint YAML Files
-        run: yaml-lint action.yml
+        run: npx yaml-lint action.yml
 
       - name: Clean Workspace
         run: git clean -dxf
