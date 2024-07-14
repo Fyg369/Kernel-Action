@@ -1,4 +1,4 @@
-name: mmp
+name: fj
 on:
   watch:
     types: [started]
