@@ -54,7 +54,7 @@ jobs:
                 *) echo "Unknow cpu architecture for this device !" && exit 1 ;;
             esac
             chmod 755 -R ./shfmt
-            ./shfmt -w -i 2 ksupatch.sh
+            ./shfmt -w -i 2 kernelsu/ksupatch.sh
 
       - name: Clean Workspace
         run: git clean -dxf
