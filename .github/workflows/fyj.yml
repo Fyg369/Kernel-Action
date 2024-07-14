@@ -13,10 +13,18 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Install Node.js
+      - name: Setup Node.js and Install Dependencies
         uses: actions/setup-node@v4
         with:
-         node-version: 20
+          node-version: 20
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install yaml-lint
         run: npm install -g yaml-lint
@@ -42,19 +50,18 @@ jobs:
         if: matrix.lint == 'shellcheck'
         uses: ludeeus/action-shellcheck@2.0.0
 
-      - name: shfmt lint
+      - name: Download and Run shfmt
         if: matrix.lint == 'shfmt'
         run: |
-            export HOST_ARCH=$(dpkg --print-architecture)
-            case ${HOST_ARCH} in
-                armv7* | armv8l | armhf | arm) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_arm -o shfmt ;;
-                i*86 | x86) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_x86 -o shfmt ;;
-                amd64 | x86_64) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64 -o shfmt ;;
-                aarch64 | arm64) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_arm64 -o shfmt ;;
-                *) echo "Unknown CPU architecture for this device!" && exit 1 ;;
-            esac
-            chmod +x shfmt
-            ./shfmt -w -i 2 ksupatch.sh
+          case $(dpkg --print-architecture) in
+            armv7*|armv8l|armhf|arm)   aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_arm -o shfmt ;;
+            i*86|x86)                  aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_x86 -o shfmt ;;
+            amd64|x86_64)              aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64 -o shfmt ;;
+            aarch64|arm64)             aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_arm64 -o shfmt ;;
+            *)                         echo "Unknown CPU architecture for this device!" && exit 1 ;;
+          esac
+          chmod +x shfmt
+          ./shfmt -w -i 2 ksupatch.sh
 
       - name: Clean Workspace
         run: git clean -dxf
@@ -66,6 +73,9 @@ jobs:
       contents: read
 
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
       - name: Mmp CI
         uses: Fyg369/Kernel-Action@main
         with:
@@ -91,3 +101,6 @@ jobs:
           bbrplus: true
           ccache: true
           anykernel3: true
+
+      - name: Clean Workspace
+        run: git clean -dxf
