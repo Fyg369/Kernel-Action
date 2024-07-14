@@ -37,7 +37,6 @@ jobs:
       - name: Install aria2 and shfmt
         if: matrix.check == 'shfmt'
         run: |
-          sudo apt-get update && sudo apt-get install -y aria2
           SHFMT_VERSION=v3.8.0
           case $(dpkg --print-architecture) in
             armv7* | armv8l | armhf | arm) ARCH=arm ;;
