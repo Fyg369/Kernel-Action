@@ -16,15 +16,12 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js and install YAML Lint
         if: matrix.check == 'yaml'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        if: matrix.check == 'yaml'
-        run: npm install -g yaml-lint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nodejs npm
+          npm install -g yaml-lint
 
       - name: Check YAML Syntax
         if: matrix.check == 'yaml'
@@ -34,7 +31,7 @@ jobs:
         if: matrix.check == 'shellcheck'
         uses: ludeeus/action-shellcheck@2.0.0
 
-      - name: Install aria2 and shfmt
+      - name: Download and Run shfmt
         if: matrix.check == 'shfmt'
         run: |
           SHFMT_VERSION=v3.8.0
