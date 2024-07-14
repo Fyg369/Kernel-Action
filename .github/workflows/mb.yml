@@ -20,11 +20,11 @@ jobs:
          node-version: 20
 
       - name: Install dependence
-        run: sudo npm i -g yaml-lint
+        run: npm install yaml-lint
 
       - name: Check yaml
-        run: /usr/local/lib/node_modules/yaml-lint/dist/cli.js action.yml
-
+        run: npx yaml-lint action.yml
+        
       - name: Clean Workspace
         run: git clean -dxf
 
