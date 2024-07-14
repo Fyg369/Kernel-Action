@@ -1,4 +1,4 @@
-name: fyj
+name: mmp
 on:
   watch:
     types: [started]
@@ -24,23 +24,20 @@ jobs:
 
       - name: Install dependencies
         if: matrix.check == 'yaml'
-        run: npm install yaml-lint
+        run: npm install -g yaml-lint
 
       - name: Check YAML Syntax
         if: matrix.check == 'yaml'
-        run: npx yaml-lint action.yml
+        run: yaml-lint action.yml
 
       - name: ShellCheck Lint
         if: matrix.check == 'shellcheck'
         uses: ludeeus/action-shellcheck@2.0.0
 
-      - name: Install aria2
-        if: matrix.check == 'shfmt'
-        run: sudo apt-get update && sudo apt-get install -y aria2
-
-      - name: Download and Run shfmt
+      - name: Install aria2 and shfmt
         if: matrix.check == 'shfmt'
         run: |
+          sudo apt-get update && sudo apt-get install -y aria2
           SHFMT_VERSION=v3.8.0
           case $(dpkg --print-architecture) in
             armv7* | armv8l | armhf | arm) ARCH=arm ;;
@@ -57,10 +54,8 @@ jobs:
         run: git clean -dxf
 
   ci-mmp:
-    strategy:
-      fail-fast: false
-    needs: [lint]
     runs-on: ubuntu-latest
+    needs: [lint]
     permissions:
       contents: read
     steps:
