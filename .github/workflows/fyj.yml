@@ -1,4 +1,4 @@
-name: fyj
+name: mmp
 on:
   watch:
     types: [started]
@@ -21,6 +21,7 @@ jobs:
 
       - name: Install dependence
         run: sudo npm i -g yaml-lint
+        echo 'PATH=$(npm bin -g):$PATH' >> $GITHUB_ENV
 
       - name: Check yaml
         run: yaml-lint action.yml
