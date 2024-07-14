@@ -1,4 +1,4 @@
-name: mmp
+name: fyj
 on:
   watch:
     types: [started]
@@ -23,11 +23,11 @@ jobs:
 
       - name: Install YAML Lint
         if: matrix.check == 'yaml'
-        run: npm install -g yaml-lint
+        run: npm install yaml-lint
 
       - name: Check YAML Syntax
         if: matrix.check == 'yaml'
-        run: yaml-lint action.yml
+        run: npx yaml-lint action.yml
 
       - name: ShellCheck Lint
         if: matrix.check == 'shellcheck'
