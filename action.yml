@@ -474,9 +474,7 @@ runs:
                 sed -i 's/is_slot_device=0;/IS_SLOT_DEVICE=auto;/g' AnyKernel3/anykernel.sh
                 sed -i 's/ramdisk_compression=auto;/# ramdisk_compression=auto;/' AnyKernel3/anykernel.sh
                 sed -i 's/patch_vbmeta_flag=auto;/# patch_vbmeta_flag=auto;/' AnyKernel3/anykernel.sh
-                sed -i '/\. tools\/ak3-core.sh/a \
-                split_boot\n\
-                flash_boot' AnyKernel3/anykernel.sh
+                sed -i '/\. tools\/ak3-core.sh/a split_boot\nflash_boot' AnyKernel3/anykernel.sh
             fi
 
             if [ -f out/arch/${{ inputs.arch }}/boot/Image.*-dtb ]; then
