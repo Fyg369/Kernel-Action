@@ -20,7 +20,7 @@ jobs:
          node-version: 20
 
       - name: Install dependence
-        run: npm install yaml-lint
+        run: npm install -g yaml-lint
 
       - name: Check yaml
         run: npx yaml-lint action.yml
