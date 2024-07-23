@@ -405,34 +405,33 @@ runs:
 
          echo "::group:: Building Kernel with selected cross compiler"
          mkdir out -p -v
-         if [ ${{ inputs.android-ndk }} = true ]; then
-             export CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64
-             export PATH=$CLANG_PATH/bin:$PATH
+         COMMAND="make -j$(nproc --all) ${{ inputs.config }} ARCH=${{ inputs.arch }} all ${{ inputs.extra-cmd }} O=out"
+         if [ ${{ inputs.aosp-clang }} = true ] || [ ! -z ${{ inputs.other-clang-url}} ]; then
+              COMMAND+=" PATH=$HOME/clang/bin:$PATH"
+         elif [ ${{ inputs.android-ndk }} = true ]; then
+              COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
+         fi
+         export PATH=$CLANG_PATH/bin:$PATH
+         if [ ${{ inputs.aosp-gcc }} = true ]; then
+             COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
+         elif [ ${{ inputs.android-ndk }} = true ]; then
+             COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
+         fi
+         if [ ${{ inputs.aosp-clang }} = true ] || [ ! -z ${{ inputs.other-clang-url}} ]; then
              if [ ${{ inputs.ccache }} = true ]; then
-                 export USE_CCACHE=1
-                 make -j$(nproc --all) CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm- CLANG_TRIPLE=aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))- CC="ccache clang" ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
+                 COMMAND+=" CC='ccache clang'"
              else
-                 make -j$(nproc --all) CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm- CLANG_TRIPLE=aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
-             fi
-         elif [ ${{ inputs.android-ndk }} = false ] && [ ${{ inputs.aosp-gcc }} = true ]; then
-             export CLANG_PATH=$HOME/clang
-             export PATH=$CLANG_PATH/bin:$PATH
-             if [ ${{ inputs.ccache }} = true ]; then
-                 export USE_CCACHE=1
-                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC="ccache clang" ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
-             else
-                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
+                 COMMAND+=" CC=clang"
              fi
          else
              if [ ${{ inputs.ccache }} = true ]; then
-                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CC="ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc" ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
-             else
-                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- ARCH=${{ inputs.arch }} O=out ${{ inputs.config }} all ${{ inputs.extra-cmd }}
+                 COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
              fi
          fi
+         ${COMMAND}
          echo "::endgroup::"
 
-         unset USE_CCACHE CLANG_TRIPLE COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER
+         unset USE_CCACHE CLANG_TRIPLE COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND
 
          if [ ${{ inputs.anykernel3 }} = false ]; then
             echo "::group:: Preparing to Upload boot.img"
@@ -471,7 +470,6 @@ runs:
                 sed -i 's!BLOCK=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;!BLOCK=auto;!g' AnyKernel3/anykernel.sh
                 sed -i 's/do.devicecheck=1/do.devicecheck=0/g' AnyKernel3/anykernel.sh
                 sed -i 's/IS_SLOT_DEVICE=0;/IS_SLOT_DEVICE=auto;/g' AnyKernel3/anykernel.sh
-                #sed -i '/\. tools\/ak3-core.sh/a split_boot;\nflash_boot;' AnyKernel3/anykernel.sh
             fi
 
             if [ -f out/arch/${{ inputs.arch }}/boot/Image.*-dtb ]; then
