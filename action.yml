@@ -428,7 +428,7 @@ runs:
                  COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
              fi
          fi
-         ${COMMAND}
+         eval ${COMMAND}
          echo "::endgroup::"
 
          unset USE_CCACHE CLANG_TRIPLE COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND
