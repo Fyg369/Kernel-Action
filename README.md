@@ -26,7 +26,7 @@ Strongly recommends using the stable version (such as v1.2) instead of the devel
 - First, you need to determine the kernel source code and configuration files.
 - Find your kernel source repository and configure the workflow file according to the following example and README.md:
 
-```
+```yml
 name: CI
 
 on:
