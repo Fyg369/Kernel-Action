@@ -15,9 +15,17 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-         node-version: 20
+          node-version: 20
 
-      - name: Install dependence
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
         run: npm install -g yaml-lint
 
       - name: Check yaml
@@ -48,7 +56,6 @@ jobs:
                 i*86 | x86) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_x86 -o shfmt ;;
                 amd64 | x86_64) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64 -o shfmt ;;
                 aarch64 | arm64) aria2c https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_arm64 -o shfmt ;;
-
                 *) echo "Unknow cpu architecture for this device !" && exit 1 ;;
             esac
             chmod 755 -R ./shfmt
@@ -68,10 +75,9 @@ jobs:
       contents: write
 
     steps:
-    - name: Mmp CI
-      uses: Fyg369/Kernel-Action@main
-      with:
-        # extra-cmd: chmod +x $(pwd)/dtc/dtc && DTC_EXT=$(pwd)/dtc/dtc
+      - name: Mmp CI
+        uses: Fyg369/Kernel-Action@main
+        with:
           kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
           kernel-dir: mmp
           kernel-branch: mcd-OOS-R
