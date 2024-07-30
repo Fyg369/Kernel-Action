@@ -28,6 +28,7 @@ function lintYAMLFile(filePath) {
 async function checkYAMLFilesSequentially() {
   const files = [
     '../action.yml',
+    '../.github/workflows/check.yml',
     '../.github/workflows/np.yml',
     '../.github/workflows/mmp.yml',
   ];
