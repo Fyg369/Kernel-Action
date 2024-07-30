@@ -466,7 +466,7 @@ runs:
             if [ ! -z ${{ inputs.anykernel3-url }} ]; then
                 git clone ${{ inputs.anykernel3-url }} AnyKernel3
             else
-                git clone https://github.com/osm0sis/AnyKernel3
+                git clone https://github.com/uwu-gl/AnyKernel3
                 sed -i 's!BLOCK=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;!BLOCK=auto;!g' AnyKernel3/anykernel.sh
                 sed -i 's/do.devicecheck=1/do.devicecheck=0/g' AnyKernel3/anykernel.sh
                 sed -i 's/IS_SLOT_DEVICE=0;/IS_SLOT_DEVICE=auto;/g' AnyKernel3/anykernel.sh
