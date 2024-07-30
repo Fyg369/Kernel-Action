@@ -21,8 +21,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Mmp CI
-      uses: Fyg369/Kernel-Action@main
-
+      uses: ./
       with:
         # extra-cmd: chmod +x $(pwd)/dtc/dtc && DTC_EXT=$(pwd)/dtc/dtc
           kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
