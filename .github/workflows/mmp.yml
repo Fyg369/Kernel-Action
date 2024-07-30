@@ -21,7 +21,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Mmp CI
-      uses: ./
+      uses: Fyg369/Kernel-Action@main
 
       with:
         # extra-cmd: chmod +x $(pwd)/dtc/dtc && DTC_EXT=$(pwd)/dtc/dtc
