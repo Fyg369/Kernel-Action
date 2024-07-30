@@ -21,7 +21,7 @@ jobs:
         run: cd tests && yarn install
 
       - name: Check yaml
-        run: npx yaml-lint action.yml
+        run: cd tests && node index.js && cd ..
 
       - name: Clean Workspace
         run: git clean -dxf
