@@ -9,10 +9,10 @@ jobs:
   ci-test:
     needs:
       - lint
-    name: Build Kernel
+    name: Mmp CI
     strategy:
       fail-fast: false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
 
