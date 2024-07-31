@@ -24,7 +24,7 @@ jobs:
         run: cd tests && node index.js && cd ..
 
       - name: Clean Workspace
-        run: git clean -dxf
+        run: perl tests/clean.pl
 
   sh-check:
     runs-on: ubuntu-latest
@@ -55,4 +55,4 @@ jobs:
             ./shfmt -w -i 2 ksupatch.sh
 
       - name: Clean Workspace
-        run: git clean -dxf
+        run: perl tests/clean.pl
