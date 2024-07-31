@@ -12,7 +12,7 @@ jobs:
     name: ci-mmp
     strategy:
       fail-fast: false
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
 
