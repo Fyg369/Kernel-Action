@@ -1,4 +1,4 @@
-name: mmp
+name: Mmp
 on:
   workflow_dispatch:
 
