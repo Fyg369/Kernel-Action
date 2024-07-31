@@ -29,8 +29,8 @@ async function checkYAMLFilesSequentially() {
   const files = [
     '../action.yml',
     '../.github/workflows/check.yml',
-    '../.github/workflows/np.yml',
     '../.github/workflows/mmp.yml',
+    '../.github/workflows/np.yml',
   ];
 
   const checkStart = Date.now();
