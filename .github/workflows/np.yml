@@ -1,4 +1,4 @@
-name: np
+name: Np
 on:
   workflow_dispatch:
 
