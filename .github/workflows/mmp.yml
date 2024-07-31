@@ -1,0 +1,48 @@
+name: Mmp
+on:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    uses: ./.github/workflows/check.yml
+
+  ci-test:
+    needs:
+      - lint
+    name: ci-mmp
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Mmp CI
+      uses: ./
+      with:
+        # extra-cmd: chmod +x $(pwd)/dtc/dtc && DTC_EXT=$(pwd)/dtc/dtc
+          kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
+          kernel-dir: mmp
+          kernel-branch: mcd-OOS-R
+          config: mcd_ksu_defconfig
+          arch: arm64
+          aosp-gcc: true
+          aosp-clang: false
+          other-clang-url: https://github.com/kdrag0n/proton-clang
+          other-clang-branch: master
+          ksu: false
+          ksu-version: main
+          android-version: 12
+          aosp-clang-version: r383902
+          python-27: true
+          disable-lto: true
+          disable_cc_werror: true
+          lxc: true
+          nethunter: true
+          nethunter-patch: true
+          bbrplus: true
+          ccache: true
+          anykernel3: true
