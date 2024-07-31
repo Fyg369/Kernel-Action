@@ -31,6 +31,7 @@ async function checkYAMLFilesSequentially() {
     '../.github/workflows/check.yml',
     '../.github/workflows/mmp.yml',
     '../.github/workflows/np.yml',
+    '../.github/dependabot.yml',    
   ];
 
   const checkStart = Date.now();
