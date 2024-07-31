@@ -327,7 +327,7 @@ runs:
 
          if [ ${{ inputs.nethunter }} = true ]; then
              echo "::group:: Initializing Kali nethunter"
-             aria2c https://github.com/Fyj69/Kali-defconfig-checker/raw/master/check-kernel-config
+             aria2c https://github.com/Biohazardousrom/Kali-defconfig-checker/raw/master/check-kernel-config
              bash check-kernel-config ${{ inputs.config }} -w
              if [ ${{ inputs.nethunter-patch }} = true ]; then
                  aria2c https://github.com/tomxi1997/kali-nethunter_patches/raw/main/add-rtl88xxau-5.6.4.2-drivers.patch
