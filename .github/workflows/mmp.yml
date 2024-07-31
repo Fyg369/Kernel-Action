@@ -9,7 +9,7 @@ jobs:
   ci-test:
     needs:
       - lint
-    name: Mmp CI
+    name: ci-mmp
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
