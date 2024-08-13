@@ -25,7 +25,7 @@ jobs:
       with:
           #extra-cmd: chmod +x $(pwd)/dtc/dtc && DTC_EXT=$(pwd)/dtc/dtc
           kernel-url: https://github.com/Fyj69/mcd_kernel_oneplus_sdm845
-          kernel-dir: mmp
+          kernel-dir: ksu
           kernel-branch: mcd-OOS-R
           config: mcd_ksu_defconfig
           arch: arm64
