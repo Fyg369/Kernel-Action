@@ -388,16 +388,17 @@ runs:
 
          if [ ${{ inputs.lxc }} = true ]; then
              echo "::group:: Enabling LXC"
-             aria2c https://github.com/wu17481748/lxc-docker/raw/main/LXC-DOCKER-OPEN-CONFIG.sh
-             bash LXC-DOCKER-OPEN-CONFIG.sh ${{ inputs.config }} -w
+             test -d lxc || mkdir -p -v lxc
+             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/Kconfig -o lxc/Kconfig
+             echo 'source "lxc/Kconfig"' >> Kconfig
              grep -q "CONFIG_ANDROID_PARANOID_NETWORK" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" && sed -i 's/CONFIG_ANDROID_PARANOID_NETWORK=y/#CONFIG_ANDROID_PARANOID_NETWORK=y/' arch/${{ inputs.arch }}/configs/${{ inputs.config }}
              if [ ${{ inputs.lxc-patch }} = true ]; then
-                 aria2c https://github.com/wu17481748/lxc-docker/raw/main/cgroup.patch
+                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/xt_qtaguid.patch
+                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/cgroup.patch
                  patch kernel/cgroup/cgroup.c < cgroup.patch
-                 aria2c https://github.com/wu17481748/lxc-docker/raw/main/xt_qtaguid.patch
                  patch net/netfilter/xt_qtaguid.c < xt_qtaguid.patch
              else
-                 echo skip lxc patch
+                 echo skip lxc patching
              fi
              echo "::endgroup::"
          fi
@@ -519,6 +520,10 @@ runs:
         tag_name: last-ci
         files: build/*
         make_latest: true
+        body: |
+            config: ${{ inputs.config }}
+            branch: ${{ inputs.kernel-branch }}
+            source: ${{ inputs.kernel-url }}
 
 posts:
   using: 'composite'
