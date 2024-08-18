@@ -109,6 +109,10 @@ You should disable aosp-clang and android-ndk options to use it.
 ### Why KernelSU version built with this action is still v0.9.5？
 See [KernelSU 's release note](https://github.com/tiann/KernelSU/releases/tag/v1.0.0) for more details.
 
+### Why the workflow exits with a code with an error value of some nubmer？
+- If you get an error while downloading the toolchain or pulling the source code, please check whether your option or source code address is legitimate.
+- If you encounter problems during compilation, consider replacing the source code or replacing the compiler.
+
 ## Credits
 - [KernelSU](https://github.com/tiann/KernelSU)
 - [dabao1955](https://github.com/dabao1955/kernel_build_action)
