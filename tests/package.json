@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "run": "node index.js"
+    "check": "node index.js"
   },
   "dependencies": {
     "yaml-lint": "^1.7.0"
