@@ -120,10 +120,6 @@ inputs:
     description: 'Please press nember instead of r(e.g. : 26).'
     required: false
     default: r21b
-  python-27:
-    description: 'Use python2.7 when build kernel.'
-    required: false
-    default: false
   anykernel3:
     description: 'Package kernel use anykernel3.'
     required: false
@@ -247,20 +243,6 @@ runs:
              cd $HOMES
          fi
 
-         if [ ${{ inputs.python-27 }} = true ]; then
-             echo "::group:: Installing Python2.7 instead Python3"
-             if ! sudo apt-cache search python2.7 | grep -i python2.7 >>/dev/null; then
-                 echo "deb [trusted=yes] https://deb.debian.org/debian/ bullseye main contrib non-free" | sudo tee -a /etc/apt/sources.list >/dev/null
-                 sudo apt-get update
-             fi
-             sudo apt-get install -y python2.7 python2.7-minimal
-             test -f /bin/python && sudo rm -v /bin/python
-             test -f /bin/python || sudo ln -v -s /bin/python2.7 /bin/python
-             test -f /bin/python2 || sudo ln -v -s /bin/python2.7 /bin/python2
-             echo "::endgroup::"
-             grep -i "bullseye" /etc/apt/sources.list >>/dev/null && sudo sed '$d' /etc/apt/sources.list >>/dev/null
-         fi
-
          if [ ${{ inputs.aosp-clang }} = true ]; then
              echo "::group:: Downloading AOSP clang"
              if [ ${{ inputs.aosp-gcc }} = true ]; then
@@ -323,6 +305,15 @@ runs:
             fi
             echo "::endgroup::"
          fi
+
+         if [ -f scripts/dtc/libfdt/mkdtboimg.py ]; then
+            if grep python2 scripts/Makefile.lib >/dev/null; then
+                echo "::group:: Uning mkdtboimg Python3 version instead of Python2 version"
+                rm -rf -v scripts/dtc/libfdt/mkdtboimg.py && aria2c https://raw.githubusercontent.com/Fyg369/Kernel-Action/main/mkdtboimg.py -o scripts/dtc/libfdt/mkdtboimg.py
+                test -f /usr/bin/python2 || sudo ln -s -f -v /usr/bin/python3 /usr/bin/python2
+            fi
+         fi
+         echo "::endgroup::"
 
          if [ ${{ inputs.nethunter }} = true ]; then
              echo "::group:: Initializing Kali nethunter"
@@ -388,16 +379,17 @@ runs:
 
          if [ ${{ inputs.lxc }} = true ]; then
              echo "::group:: Enabling LXC"
-             aria2c https://github.com/wu17481748/lxc-docker/raw/main/LXC-DOCKER-OPEN-CONFIG.sh
-             bash LXC-DOCKER-OPEN-CONFIG.sh ${{ inputs.config }} -w
+             test -d lxc || mkdir -p -v lxc
+             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/Kconfig -o lxc/Kconfig
+             echo 'source "lxc/Kconfig"' >> Kconfig
              grep -q "CONFIG_ANDROID_PARANOID_NETWORK" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" && sed -i 's/CONFIG_ANDROID_PARANOID_NETWORK=y/#CONFIG_ANDROID_PARANOID_NETWORK=y/' arch/${{ inputs.arch }}/configs/${{ inputs.config }}
              if [ ${{ inputs.lxc-patch }} = true ]; then
-                 aria2c https://github.com/wu17481748/lxc-docker/raw/main/cgroup.patch
+                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/xt_qtaguid.patch
+                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/cgroup.patch
                  patch kernel/cgroup/cgroup.c < cgroup.patch
-                 aria2c https://github.com/wu17481748/lxc-docker/raw/main/xt_qtaguid.patch
                  patch net/netfilter/xt_qtaguid.c < xt_qtaguid.patch
              else
-                 echo skip lxc patch
+                 echo skip lxc patching
              fi
              echo "::endgroup::"
          fi
@@ -412,7 +404,7 @@ runs:
          fi
          export PATH=$CLANG_PATH/bin:$PATH
          if [ ${{ inputs.aosp-gcc }} = true ]; then
-             COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
+             COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
          elif [ ${{ inputs.android-ndk }} = true ]; then
              COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
@@ -519,6 +511,10 @@ runs:
         tag_name: last-ci
         files: build/*
         make_latest: true
+        body: |
+            config: ${{ inputs.config }}
+            branch: ${{ inputs.kernel-branch }}
+            source: ${{ inputs.kernel-url }}
 
 posts:
   using: 'composite'
