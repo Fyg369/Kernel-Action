@@ -39,7 +39,7 @@ jobs:
           aosp-clang-version: r383902
           disable-lto: true
           disable_cc_werror: true
-          lxc: false
+          lxc: true
           nethunter: true
           nethunter-patch: true
           bbrplus: true
