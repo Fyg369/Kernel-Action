@@ -46,7 +46,6 @@ jobs:
           arch: arm64
           aosp-gcc: true
           aosp-clang: true
-          python-2.7: true
           android-version: 12
           aosp-clang-version: r383902
 ```
@@ -74,6 +73,7 @@ Or use the [preset workflow file](https://github.com/dabao1955/kernel_build_acti
 | ksu | false | Enable KernelSU | true |
 | ksu-version | false | KernelSU version | v0.6.6 |
 | ksu-lkm(may not build successfully for non-GKI devices) | false | Build KernelSU as a linux kernel module | true |
+| bbrplus | false | | false |
 | disable-lto | false | | false |
 | disable_fst | false | | false |
 | disable_cc_werror | false | | false |
@@ -91,7 +91,6 @@ Or use the [preset workflow file](https://github.com/dabao1955/kernel_build_acti
 | other-clang-branch | false | | 10.0|
 | android-ndk | false | Use Android-NDK to compile kernel . Before enable this option，you should disable aosp-gcc and aosp-clang bacause android-ndk will conflict with them | false |
 | android-ndk-version | false | | r23b |
-| python-27 | false | Use python2.7 instead of python3, this is helpful for some kernel compilations | false |
 | anykernel3 | false | Package the compiled kernel using AnyKernel3. If this option is disabled, You need to fill `bootimg-url`. | false |
 | anykernel3-url | false | 3rdparty AnyKernel3 url | https://github.com/username/AnyKernel3 |
 | release | flase | After the kernel compilation is completed, it will be automatically published to the releases page | true |
