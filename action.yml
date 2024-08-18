@@ -426,7 +426,7 @@ runs:
          eval ${COMMAND}
          echo "::endgroup::"
 
-         unset USE_CCACHE CLANG_TRIPLE COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE
+         unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE
 
          if [ ${{ inputs.anykernel3 }} = false ]; then
             echo "::group:: Preparing to Upload boot.img"
