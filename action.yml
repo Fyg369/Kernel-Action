@@ -319,7 +319,7 @@ runs:
 
          if [ ${{ inputs.nethunter }} = true ]; then
              echo "::group:: Initializing Kali nethunter"
-             curl -SsL https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/config.sh | bash -s ${{ inputs.config }} -w
+             aria2c https://github.com/Biohazardousrom/Kali-defconfig-checker/raw/master/check-kernel-config && bash check-kernel-config arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
              if [ ${{ inputs.nethunter-patch }} = true ]; then
                  #aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection.patch && git apply add-wifi-injection.patch
                  aria2c https://raw.githubusercontent.com/dabao1955/kernel_build_action/main/nethunter/add-rtl88xxau-5.6.4.2-drivers.patch && git apply add-rtl88xxau-5.6.4.2-drivers.patch
