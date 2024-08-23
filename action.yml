@@ -319,7 +319,7 @@ runs:
 
          if [ ${{ inputs.nethunter }} = true ]; then
              echo "::group:: Initializing Kali nethunter"
-             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/config.sh -o nconfig.sh &&  bash nconfig.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
+             curl -SsL https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/config.sh | bash -s arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
              if [ ${{ inputs.nethunter-patch }} = true ]; then
                  #aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection.patch && git apply add-wifi-injection.patch
                  aria2c https://raw.githubusercontent.com/dabao1955/kernel_build_action/main/nethunter/add-rtl88xxau-5.6.4.2-drivers.patch && git apply add-rtl88xxau-5.6.4.2-drivers.patch
@@ -375,7 +375,7 @@ runs:
 
          if [ ${{ inputs.lxc }} = true ]; then
              echo "::group:: Enabling LXC"
-             aria2c https://github.com/wu17481748/lxc-docker/raw/main/LXC-DOCKER-OPEN-CONFIG.sh && bash LXC-DOCKER-OPEN-CONFIG.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
+             curl -SsL https://github.com/wu17481748/lxc-docker/raw/main/LXC-DOCKER-OPEN-CONFIG.sh | bash -s arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
              grep -q "CONFIG_ANDROID_PARANOID_NETWORK" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" && sed -i 's/CONFIG_ANDROID_PARANOID_NETWORK=y/#CONFIG_ANDROID_PARANOID_NETWORK=y/' arch/${{ inputs.arch }}/configs/${{ inputs.config }}
              if [ ${{ inputs.lxc-patch }} = true ]; then
                  aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/xt_qtaguid.patch
