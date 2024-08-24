@@ -310,9 +310,9 @@ runs:
          if [ -f scripts/dtc/libfdt/mkdtboimg.py ]; then
             if grep python2 scripts/Makefile.lib >/dev/null; then
                 echo "::group:: Uning mkdtboimg Python3 version instead of Python2 version"
-                rm -rf -v scripts/dtc/libfdt/mkdtboimg.py && aria2c https://github.com/dabao1955/kernel_build_action/raw/main/mkdtboimg.py -o scripts/dtc/libfdt/mkdtboimg.py
+                rm -rf -v scripts/dtc/libfdt/mkdtboimg.py && aria2c https://raw.githubusercontent.com/Fyg369/Kernel-Action/main/mkdtboimg.py -o scripts/dtc/libfdt/mkdtboimg.py
             elif grep scripts/ufdt && test ! -d scripts/ufdt >/dev/null; then
-                aria2c https://github.com/dabao1955/kernel_build_action/raw/main/mkdtboimg.py -o ufdt/libufdt/utils/src/mkdtboimg.py
+                aria2c https://raw.githubusercontent.com/Fyg369/Kernel-Action/main/mkdtboimg.py -o ufdt/libufdt/utils/src/mkdtboimg.py
             fi
             test -f /usr/bin/python2 || sudo ln -s -f -v /usr/bin/python3 /usr/bin/python2
          fi
