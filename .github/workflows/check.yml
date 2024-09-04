@@ -17,6 +17,21 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Check yaml
+        run: cd tests && bun run index.js
+
+      - name: Clean Workspace
+        run: perl tests/clean.pl
+
+  js-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,12 +39,6 @@ jobs:
 
       - name: Install dependence
         run: cd tests && yarn install
-
-      - name: Check yaml
-        run: cd tests && bun run index.js
-
-      - name: Clean Workspace
-        run: perl tests/clean.pl
 
   sh-check:
     runs-on: ubuntu-latest
