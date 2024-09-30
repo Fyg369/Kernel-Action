@@ -12,6 +12,9 @@ inputs:
   depth:
     required: false
     default: 1
+  vendor:
+    required: false
+    default: false
   vendor-url:
     description: 'Kernel Vendor Source Url'
     required: false
@@ -47,6 +50,13 @@ inputs:
     description: 'KernelSU default branch'
     required: false
     default: "main"
+  ksu-other:
+    required: false
+    default: false
+  ksu-url:
+    description: "Use 3rd KernelSU"
+    required: false
+    default: ""
   ksu-lkm:
     description: "Build KernelSU as a loadable kernel module"
     required: false
@@ -274,7 +284,7 @@ runs:
          git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.kernel-branch }}" --depth=${{ inputs.depth }} kernel/${{ inputs.kernel-dir }}
          echo "::endgroup::"
 
-         if [ ! -z  "${{ inputs.vendor-url }}" ]; then
+         if [ "${{ inputs.vendor }}" = true ]; then
              echo "::group:: Pulling Kernel vendor source"
              git clone ${{ inputs.vendor-url }} --depth=${{ inputs.depth }} kernel/${{ inputs.vendor-dir }} -b ${{ inputs.vendor-branch }}
              test -d kernel/${{ inputs.vendor-dir }}/vendor && cp -rv kernel/${{ inputs.vendor-dir }}/vendor kernel
@@ -283,27 +293,38 @@ runs:
          fi
 
          cd kernel/${{ inputs.kernel-dir }}
-         export SUBLEVEL=$(cat Makefile | grep "PATCHLEVEL =" | awk '{print $3}')
          function version_gt() { test "$(echo -e "$1\n$2" | sort -V | tail -n1)" == "$1"; }
+         VERSION=$(grep -E '^VERSION = ' Makefile | awk '{print $3}')
+         PATCHLEVEL=$(grep -E '^PATCHLEVEL = ' Makefile | awk '{print $3}')
+         SUBLEVEL=$(grep -E '^SUBLEVEL = ' Makefile | awk '{print $3}')
+         if [ "$VERSION" -lt 5 ]; then
+             touch nongki.txt
+         elif [ "PATCHLEVEL" -lt 10 ]; then
+             touch nongki.txt
+         fi
 
          if [ ${{ inputs.ksu }} = true ]; then
             echo "::group:: Initializing KernelSU"
             if [ -f KernelSU/kernel/Kconfig ]; then
                 echo "KernelSU has been initialized,skipped."
             else
-                aria2c https://raw.githubusercontent.com/Fyg369/Kernel-Action/main/check_gki.pl && perl check_gki.pl
-                if [ -f nongki.txt ]; then
-                    printf "Warning: The KernelSU version you selected was detected to be ${{ inputs.ksu-version }}, but KernelSU has dropped support for the non-gki kernel since 0.9.5. \n This will force switch to v0.9.5.\n"
-                    export KVER=v0.9.5
+                if [ ${{ inputs.ksu-other }} = true ]; then
+                    curl -SsL "${{ inputs.ksu-url }}/raw/${{ inputs.ksu-version }}/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
                 else
-                    export KVER=${{ inputs.ksu-version }}
+                    echo "Kernel version: $VERSION.$PATCHLEVEL.$SUBLEVEL"
+                    if [ -f nongki.txt ]; then
+                        printf "Warning: The KernelSU version you selected was detected to be ${{ inputs.ksu-version }}, but KernelSU has dropped support for the non-gki kernel since 0.9.5. \n This will force switch to v0.9.5.\n"
+                        export KVER=v0.9.5
+                    else
+                        export KVER=${{ inputs.ksu-version }}
+                    fi
+                        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s "$KVER"
+                    fi
                 fi
-                    curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s "$KVER"
-            fi
-            if [ ${{ inputs.ksu-lkm }} = true ]; then
-                if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
-                    sed -i 's/CONFIG_KSU=y/CONFIG_KSU=m/g' "arch/${{ inputs.arch }}/configs/${{ inputs.config }}"
-                else
+                if [ ${{ inputs.ksu-lkm }} = true ]; then
+                    if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
+                        sed -i 's/CONFIG_KSU=y/CONFIG_KSU=m/g' "arch/${{ inputs.arch }}/configs/${{ inputs.config }}"
+                     else
                     #echo "CONFIG_KSU=m" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }}
                     sed -i '/config KSU/,/help/{s/default y/default m/}' drivers/kernelsu/Kconfig
                 fi
@@ -327,6 +348,21 @@ runs:
             test -f /usr/bin/python2 || "$SU" ln -s -f -v /usr/bin/python3 /usr/bin/python2
          fi
          echo "::endgroup::"
+
+         if [ ${{ inputs.nethunter }} = true ]; then
+             echo "::group:: Initializing Kali nethunter"
+             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/config.sh -o nconfig.sh &&  bash nconfig.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
+             if [ ${{ inputs.nethunter-patch }} = true ]; then
+                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection.patch && git apply add-wifi-injection.patch
+                 aria2c apply https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/fix-ath9k-naming-conflict.patch && git apply fix-ath9k-naming-confict.patch
+                 if [ "$SUBLEVEL" -lt "19" ]; then
+                     aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection-4.14.patch && git apply add-wifi-injection-4.14.patch
+                 fi
+             else
+                  echo "skip patch"
+             fi
+             echo "::endgroup::"
+         fi
 
          if [ ${{ inputs.nethunter }} = true ]; then
              echo "::group:: Initializing Kali nethunter"
@@ -426,7 +462,7 @@ runs:
          eval ${COMMAND}
          echo "::endgroup::"
 
-         unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE
+         unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION
 
          if [ ${{ inputs.anykernel3 }} = false ]; then
             echo "::group:: Preparing to Upload boot.img"
