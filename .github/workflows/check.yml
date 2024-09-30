@@ -18,10 +18,10 @@ jobs:
           bun-version: latest
 
       - name: Check yaml
-        run: cd tests && bun run index.js
+        run: cd tests && bun run index.ts
 
       - name: Clean Workspace
-        run: perl tests/clean.pl
+        run: bun run tests/clean.ts
 
   js-check:
     runs-on: ubuntu-latest
@@ -67,6 +67,3 @@ jobs:
             esac
             chmod 755 -R ./shfmt
             ./shfmt -w -i 2 $(find -name *.sh)
-
-      - name: Clean Workspace
-        run: perl tests/clean.pl
