@@ -299,7 +299,7 @@ runs:
          SUBLEVEL=$(grep -E '^SUBLEVEL = ' Makefile | awk '{print $3}')
          if [ "$VERSION" -lt 5 ]; then
              touch nongki.txt
-         elif [ "PATCHLEVEL" -lt 10 ]; then
+         elif [ "$PATCHLEVEL" -lt 10 ]; then
              touch nongki.txt
          fi
 
