@@ -310,7 +310,7 @@ runs:
                 if [ ${{ inputs.ksu-other }} = true ]; then
                     curl -SsL "${{ inputs.ksu-url }}/raw/${{ inputs.ksu-version }}/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
                 else
-                    echo "Kernel version: $VERSION.$PATCHLEVEL.$SUBLEVEL"
+                    echo "Kernel version: $VERSION.$PATCHLEVEL"
                     if [ -f nongki.txt ]; then
                         printf "Warning: The KernelSU version you selected was detected to be ${{ inputs.ksu-version }}, but KernelSU has dropped support for the non-gki kernel since 0.9.5. \n This will force switch to v0.9.5.\n"
                         export KVER=v0.9.5
@@ -446,7 +446,7 @@ runs:
          eval ${COMMAND}
          echo "::endgroup::"
 
-         unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE PATCHLEVEL VERSION
+         unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES KVER COMMAND SWAP_FILE PATCHLEVEL VERSION
 
          if [ ${{ inputs.anykernel3 }} = false ]; then
             echo "::group:: Preparing to Upload boot.img"
