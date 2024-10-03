@@ -35,6 +35,8 @@ jobs:
           other-clang-branch: master
           ksu: true
           ksu-version: main
+          ksu-other: true
+          ksu-url: https://github.com/NekoSekaiMoe/test
           android-version: 12
           aosp-clang-version: r383902
           disable-lto: true
