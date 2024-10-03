@@ -35,7 +35,6 @@ jobs:
           other-clang-branch: master
           ksu: true
           ksu-version: main
-          ksu-lkm: true
           ksu-other: true
           ksu-url: https://github.com/rsuntk/KernelSU
           android-version: 12
