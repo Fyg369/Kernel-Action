@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "check": "npx ts-node index.ts",
-    "clean": "npx ts-node clean.ts"
+    "check": "npx ts-node index.ts"
   },
   "dependencies": {
     "yaml-lint": "^1.7.0",
