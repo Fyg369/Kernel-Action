@@ -4,6 +4,8 @@
     "clean": "npx ts-node clean.ts"
   },
   "dependencies": {
-    "yaml-lint": "^1.7.0"
+    "yaml-lint": "^1.7.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.6.2"
   }
 }
