@@ -30,7 +30,9 @@ jobs:
           config: mcd_ksu_defconfig
           arch: arm64
           aosp-gcc: true
-          aosp-clang: true
+          aosp-clang: false
+          other-clang-url: https://github.com/kdrag0n/proton-clang
+          other-clang-branch: master
           ksu: true
           ksu-version: main
           ksu-other: true
