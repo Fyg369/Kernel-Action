@@ -21,7 +21,7 @@ jobs:
         run: cd tests && bun run index.js
 
       - name: Clean Workspace
-        run: bun run tests/clean.pl
+        run: perl tests/clean.pl
 
   js-check:
     runs-on: ubuntu-latest
