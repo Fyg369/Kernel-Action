@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "check": "npx ts-node index.js",
-    "clean": "npx ts-node clean.pl"
+    "check": "bun run index.js",
+    "clean": "bun run clean.pl"
   },
   "dependencies": {
     "yaml-lint": "^1.7.0"
