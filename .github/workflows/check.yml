@@ -18,10 +18,10 @@ jobs:
           bun-version: latest
 
       - name: Check yaml
-        run: cd tests && bun run index.ts
+        run: cd tests && bun run index.js
 
       - name: Clean Workspace
-        run: bun run tests/clean.ts
+        run: bun run tests/clean.pl
 
   js-check:
     runs-on: ubuntu-latest
