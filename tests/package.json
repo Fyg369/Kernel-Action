@@ -1,7 +1,7 @@
 {
   "scripts": {
     "check": "bun run index.js",
-    "clean": "bun run clean.pl"
+    "clean": "perl clean.pl"
   },
   "dependencies": {
     "yaml-lint": "^1.7.0"
