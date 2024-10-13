@@ -31,8 +31,8 @@ jobs:
           arch: arm64
           aosp-gcc: true
           aosp-clang: false
-          other-clang-url: https://github.com/kdrag0n/proton-clang
-          other-clang-branch: master
+          other-clang-url: https://github.com/HoleHolo/ToolChains
+          other-clang-branch: main
           ksu: true
           ksu-version: main
           ksu-other: true
