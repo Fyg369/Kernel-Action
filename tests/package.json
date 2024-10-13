@@ -1,7 +1,7 @@
 {
   "scripts": {
     "check": "bun run index.ts",
-    "clean": "bun run clean.ts"
+    "clean": "perl clean.pl"
   },
   "dependencies": {
     "yaml-lint": "^1.7.0"
