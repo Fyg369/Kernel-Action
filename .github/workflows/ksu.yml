@@ -32,7 +32,7 @@ jobs:
           aosp-gcc: true
           aosp-clang: false
           other-clang-url: https://gitlab.com/LeCmnGend/proton-clang
-          other-clang-branch: clang-13
+          other-clang-branch: clang-17
           ksu: true
           ksu-version: main
           ksu-other: true
