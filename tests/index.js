@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as yamlLint from 'yaml-lint';
+const fs = require('fs');
+const yamlLint = require('yaml-lint');
 
-function lintYAMLFile(filePath: string): Promise<void> {
+function lintYAMLFile(filePath) {
   const pendingMessage = `Checking ${filePath} ... [pending]`;
   process.stdout.write(pendingMessage);
 
@@ -25,13 +25,13 @@ function lintYAMLFile(filePath: string): Promise<void> {
   });
 }
 
-async function checkYAMLFilesSequentially(): Promise<void> {
-  const files: string[] = [
+async function checkYAMLFilesSequentially() {
+  const files = [
     '../action.yml',
     '../.github/workflows/check.yml',
     '../.github/workflows/mmp.yml',
     '../.github/workflows/ksu.yml',
-    '../.github/dependabot.yml', 
+    '../.github/dependabot.yml',
   ];
 
   const checkStart = Date.now();
@@ -47,7 +47,7 @@ async function checkYAMLFilesSequentially(): Promise<void> {
   }
 
   const totalDuration = Date.now() - checkStart;
-  console.log(`\nAll YAML files checked successfully, Total duration: ${totalDuration}ms`);
+  console.log(`\nAll YAML files checked successful,Total duration: ${totalDuration}ms`);
 }
 
 checkYAMLFilesSequentially();
