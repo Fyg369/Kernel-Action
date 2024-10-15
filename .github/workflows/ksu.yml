@@ -30,15 +30,15 @@ jobs:
           config: mcd_ksu_defconfig
           arch: arm64
           aosp-gcc: true
-          aosp-clang: false
-          other-clang-url: https://gitlab.com/LeCmnGend/proton-clang
-          other-clang-branch: clang-17
+          aosp-clang: true
+          #other-clang-url: https://github.com/kdrag0n/proton-clang
+          #other-clang-branch: master
           ksu: true
           ksu-version: main
           ksu-other: true
           ksu-url: https://github.com/rsuntk/KernelSU
           android-version: 12
-          aosp-clang-version: r383902
+          aosp-clang-version: r416183b
           disable-lto: true
           disable_cc_werror: true
           lxc: true
