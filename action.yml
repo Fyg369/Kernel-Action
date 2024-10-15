@@ -195,7 +195,7 @@ runs:
              echo "::group:: Setting Up Swap"
              "$SU" swapoff $SWAP_FILE
              "$SU" rm $SWAP_FILE
-             "$SU" fallocate -l 12G $SWAP_FILE
+             "$SU" fallocate -l 16G $SWAP_FILE
              "$SU" chmod 600 $SWAP_FILE
              "$SU" mkswap $SWAP_FILE
              "$SU" swapon $SWAP_FILE
