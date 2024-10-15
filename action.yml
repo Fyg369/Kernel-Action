@@ -169,25 +169,36 @@ runs:
       shell: bash
       run: |
          ########
-         if [[ ${GITHUB_ACTIONS} != "true" || ${OSTYPE} != "linux-gnu" || ! -f /bin/apt || "$(id -u)" -eq 0 ]]; then
-             printf "This Action Is Intended For non-root Ubuntu Runner.\n"
+         if [[ ${GITHUB_ACTIONS} != "true" || ${OSTYPE} != "linux-gnu" || ! -f /bin/apt ]]; then
+             printf "This Action Is Intended For Debian-based Runner.\n"
              exit 127
          fi
 
+         if [ "$(id -u)" -eq 0 ]; then
+             export SU=
+         else
+             export SU=sudo
+         fi
+         if [ -f /usr/bin/docker ]; then
+             echo "::group:: Cleaning necessary disk space"
+             "$SU" docker image prune --all --force
+         fi
+         echo "::endgroup::"
+
          echo "::group:: Installing Building Depend Packages"
-         sudo apt-get update
-         sudo apt-get install --no-install-recommends -y binutils binutils-aarch64-linux-gnu binutils-arm-linux-gnueabi git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python3 aria2 perl
+         "$SU" apt-get update
+         "$SU" apt-get install --no-install-recommends -y binutils binutils-aarch64-linux-gnu binutils-arm-linux-gnueabi git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python3 aria2
          aria2c -q https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh && NONINTERACTIVE=1 bash ./uninstall.sh -f -q
          echo "::endgroup::"
          export SWAP_FILE=$(swapon --show=NAME | tail -n 1)
          if [ -f /bin/swapon ]; then
              echo "::group:: Setting Up Swap"
-             sudo swapoff $SWAP_FILE
-             sudo rm $SWAP_FILE
-             sudo fallocate -l 16G $SWAP_FILE
-             sudo chmod 600 $SWAP_FILE
-             sudo mkswap $SWAP_FILE
-             sudo swapon $SWAP_FILE
+             "$SU" swapoff $SWAP_FILE
+             "$SU" rm $SWAP_FILE
+             "$SU" fallocate -l 12G $SWAP_FILE
+             "$SU" chmod 600 $SWAP_FILE
+             "$SU" mkswap $SWAP_FILE
+             "$SU" swapon $SWAP_FILE
              echo "::endgroup::"
          fi
 
@@ -343,7 +354,7 @@ runs:
              if [ ${{ inputs.nethunter-patch }} = true ]; then
                  #aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection.patch && git apply add-wifi-injection.patch
                  aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/fix-ath9k-naming-conflict.patch && git apply fix-ath9k-naming-conflict.patch
-                 aria2c https://raw.githubusercontent.com/dabao1955/kernel_build_action/main/nethunter/add-rtl88xxau-5.6.4.2-drivers.patch && git apply add-rtl88xxau-5.6.4.2-drivers.patch              
+                 aria2c https://raw.githubusercontent.com/dabao1955/kernel_build_action/main/nethunter/add-rtl88xxau-5.6.4.2-drivers.patch && git apply add-rtl88xxau-5.6.4.2-drivers.patch                 
                  if [ "$PATCHLEVEL" -lt "19" ]; then
                      aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection-4.14.patch && git apply add-wifi-injection-4.14.patch
                  fi
