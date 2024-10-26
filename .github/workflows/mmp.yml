@@ -23,7 +23,6 @@ jobs:
     - name: Mmp CI
       uses: ./
       with:
-          #extra-cmd: chmod +x $(pwd)/dtc/dtc && DTC_EXT=$(pwd)/dtc/dtc
           kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
           kernel-dir: mmp
           kernel-branch: mcd-OOS-R
@@ -31,7 +30,6 @@ jobs:
           arch: arm64
           aosp-gcc: true
           #aosp-clang: true
-          #extra-cmd: LD=ld.lld LLVM_AS=1
           other-clang-url: https://github.com/kdrag0n/proton-clang
           other-clang-branch: master
           ksu: false
