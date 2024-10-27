@@ -213,7 +213,7 @@ runs:
                  aria2c -o clang.zip "$OTHER_CLANG_URL"
                  mkdir $HOME/clang -p -v
                  unzip clang.zip -d $HOME/clang/
-                 elif [[ "$OTHER_CLANG_URL" == *'.tar.xz' ]]; then
+             elif [[ "$OTHER_CLANG_URL" == *'.tar.xz' ]]; then
                  aria2c -o clang.tar.xz "$OTHER_CLANG_URL"
                  mkdir $HOME/clang -p -v
                  tar -C $HOME/clang/ -xvf clang.tar.xz
