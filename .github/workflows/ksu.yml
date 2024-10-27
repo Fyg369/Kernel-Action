@@ -30,8 +30,8 @@ jobs:
           arch: arm64
           aosp-gcc: true
           #aosp-clang: true
-          other-clang-url: https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20241027-release/Clang-20.0.0git-20241027.tar.gz
-          #other-clang-branch: master
+          other-clang-url: https://github.com/kdrag0n/proton-clang
+          other-clang-branch: master
           ksu: true
           ksu-version: main
           ksu-other: true
