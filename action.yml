@@ -205,14 +205,16 @@ runs:
          if [ ${{ inputs.aosp-clang }} = false ] && [ ${{ inputs.android-ndk }} = false ]; then
              echo "::group:: Downloading 3rd clang"
              export OTHER_CLANG_URL=${{ inputs.other-clang-url }}
-             mkdir $HOME/clang -p -v
              if [[ "$OTHER_CLANG_URL" == *'.tar.gz' ]]; then
+                 mkdir $HOME/clang -p -v
                  aria2c -o clang.tar.gz "$OTHER_CLANG_URL"
                  tar -C $HOME/clang/ -zxf clang.tar.gz
              elif [[ "$OTHER_CLANG_URL" == *'.zip' ]]; then
+                 mkdir $HOME/clang -p -v
                  aria2c -o clang.zip "$OTHER_CLANG_URL" 
                  unzip -q clang.zip -d $HOME/clang/
              elif [[ "$OTHER_CLANG_URL" == *'.tar.xz' ]]; then
+                 mkdir $HOME/clang -p -v
                  aria2c -o clang.tar.xz "$OTHER_CLANG_URL"         
                  tar -C $HOME/clang/ -xf clang.tar.xz
              else
