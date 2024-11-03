@@ -273,11 +273,11 @@ runs:
              echo "::group:: Downloading AOSP GCC"
              if [ -d $HOME/clang ]; then
                  mkdir -p -v $HOME/gcc-64
-                 aria2c -o gcc-aarch64.tar.xz https://kali.download/nethunter-images/toolchains/google_aarch64-4.9.tar.xz
-                 tar -C $HOME/gcc-64 -xf gcc-aarch64.tar.xz
+                 aria2c -o gcc-aarch64.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
+                 tar -C $HOME/gcc-64 -zxf gcc-aarch64.tar.gz
                  mkdir -p -v $HOME/gcc-32
-                 aria2c -o gcc-arm.tar.xz https://kali.download/nethunter-images/toolchains/google_armhf-4.9.tar.xz
-                 tar -C $HOME/gcc-32 -xf gcc-arm.tar.xz
+                 aria2c -o gcc-arm.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
+                 tar -C $HOME/gcc-32 -zxf gcc-arm.tar.gz
              elif [ ${{ inputs.aosp-clang }} = true ] && [ ${{ inputs.android-ndk }} = true ]; then
                  echo "Error: The two options aosp-clang and android-ndk will conflict with each other, please turn off one." && exit 15
              else
