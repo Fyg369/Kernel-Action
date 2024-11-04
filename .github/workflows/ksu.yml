@@ -30,8 +30,8 @@ jobs:
           arch: arm64
           aosp-gcc: true
           #aosp-clang: true
-          other-clang-url: https://kali.download/nethunter-images/toolchains/google_clang-10.0.4.tar.xz
-          #other-clang-branch: master
+          other-clang-url: https://github.com/kdrag0n/proton-clang
+          other-clang-branch: master
           ksu: true
           ksu-version: main
           ksu-other: true
