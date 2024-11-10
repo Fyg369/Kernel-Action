@@ -32,7 +32,7 @@ jobs:
           #aosp-clang: true
           other-clang-url: https://github.com/kdrag0n/proton-clang
           other-clang-branch: master
-          ksu: true
+          ksu: false
           ksu-version: main
           #ksu-other: true
           #ksu-url: https://github.com/rsuntk/KernelSU
