@@ -9,7 +9,7 @@ jobs:
   ci-test:
     needs:
       - lint
-    name: ci-ksu
+    name: Build Kernel
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
