@@ -555,10 +555,3 @@ runs:
             config: ${{ inputs.config }}
             branch: ${{ inputs.kernel-branch }}
             source: ${{ inputs.kernel-url }}
-
-posts:
-  using: 'composite'
-  steps:
-    - name: post
-      shell: bash
-      run:  $HOME/clang/bin/clang --version
