@@ -40,9 +40,4 @@ jobs:
           aosp-clang-version: r416183b
           disable-lto: true
           disable_cc_werror: true
-          lxc: true
-          nethunter: true
-          nethunter-patch: true
-          bbrplus: true
-          ccache: true
           anykernel3: true
