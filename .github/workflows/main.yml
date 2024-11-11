@@ -1,0 +1,48 @@
+name: vip
+on:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    uses: ./.github/workflows/check.yml
+
+  ci-test:
+    needs:
+      - lint
+    name: vip-ksu
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Vip CI
+      uses: ./
+      with:
+          kernel-url: https://github.com/Shirayuki39/kernel_new
+          kernel-dir: vip
+          kernel-branch: shirayuki-5.10
+          config: gki_defconfig
+          arch: arm64
+          aosp-gcc: true
+          #aosp-clang: true
+          other-clang-url: https://github.com/kdrag0n/proton-clang
+          other-clang-branch: master
+          ksu: true
+          ksu-version: main
+          #ksu-other: true
+          #ksu-url: https://github.com/rsuntk/KernelSU
+          android-version: 12
+          aosp-clang-version: r416183b
+          disable-lto: true
+          disable_cc_werror: true
+          #lxc: true
+          #nethunter: true
+          #nethunter-patch: true
+          #bbrplus: true
+          #ccache: true
+          anykernel3: true
