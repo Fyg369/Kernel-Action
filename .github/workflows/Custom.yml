@@ -29,13 +29,9 @@ jobs:
           config: mcd_ksu_defconfig
           arch: arm64
           aosp-gcc: true
-          #aosp-clang: true
           other-clang-url: https://kali.download/nethunter-images/toolchains/google_clang-10.0.4.tar.xz
-          #other-clang-branch: main
           other-gcc32-url: https://kali.download/nethunter-images/toolchains/google_armhf-4.9.tar.xz
-          #other-gcc32-branch: main
           other-gcc64-url: https://kali.download/nethunter-images/toolchains/google_aarch64-4.9.tar.xz
-          #other-gcc64-branch: main
           ksu: true
           ksu-version: main
           ksu-other: true
