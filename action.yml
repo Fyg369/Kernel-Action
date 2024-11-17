@@ -318,8 +318,7 @@ runs:
                  tar -C $HOME/gcc-32 -xf gcc-arm.tar.xz
              else
                  git clone "$OTHER_GCC32_URL" $HOME/gcc-32 --depth=${{ inputs.depth }} -b ${{ inputs.other-gcc32-branch }}
-             fi
-           fi
+             fi           
          fi
          else
              echo "::group:: Downloading AOSP GCC"
@@ -340,6 +339,7 @@ runs:
          if [ ! -d $HOME/gcc-64/bin/ ] || [ ! -d $HOME/gcc-32/bin/ ]; then
              [ ! -d $HOME/gcc-64/bin/ ] && mv $HOME/gcc-64/*/* $HOME/gcc-64/
              [ ! -d $HOME/gcc-32/bin/ ] && mv $HOME/gcc-32/*/* $HOME/gcc-32/
+             fi           
          fi
          echo "::endgroup::"
 
