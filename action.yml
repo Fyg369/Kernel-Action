@@ -319,6 +319,9 @@ runs:
              else
                  git clone "$OTHER_GCC64_URL" $HOME/gcc-64 --depth=${{ inputs.depth }} -b ${{ inputs.other-gcc64-branch }}
              fi
+           fi
+         fi
+         fi
          else
              echo "::group:: Downloading AOSP GCC"
              if [ -d $HOME/clang ]; then
