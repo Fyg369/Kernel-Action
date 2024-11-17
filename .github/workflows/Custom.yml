@@ -9,7 +9,7 @@ jobs:
   ci-test:
     needs:
       - lint
-    name: ci-Custom
+    name: ci-custom
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
