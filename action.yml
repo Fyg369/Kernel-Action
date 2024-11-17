@@ -321,7 +321,6 @@ runs:
              fi
            fi
          fi
-         fi
          else
              echo "::group:: Downloading AOSP GCC"
              if [ -d $HOME/clang ]; then
