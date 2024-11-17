@@ -219,15 +219,15 @@ runs:
              echo "::group:: Downloading 3rd clang"
              export OTHER_CLANG_URL=${{ inputs.other-clang-url }}
              if [[ "$OTHER_CLANG_URL" == *'.tar.gz' ]]; then
-                 mkdir $HOME/clang -p -v
+                 mkdir -p -v $HOME/clang
                  aria2c -o clang.tar.gz "$OTHER_CLANG_URL"
                  tar -C $HOME/clang/ -zxf clang.tar.gz
              elif [[ "$OTHER_CLANG_URL" == *'.zip' ]]; then
-                 mkdir $HOME/clang -p -v
+                 mkdir -p -v $HOME/clang
                  aria2c -o clang.zip "$OTHER_CLANG_URL" 
                  unzip -q clang.zip -d $HOME/clang/
              elif [[ "$OTHER_CLANG_URL" == *'.tar.xz' ]]; then
-                 mkdir $HOME/clang -p -v
+                 mkdir -p -v $HOME/clang
                  aria2c -o clang.tar.xz "$OTHER_CLANG_URL"         
                  tar -C $HOME/clang/ -xf clang.tar.xz
              else
@@ -289,15 +289,15 @@ runs:
              export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
              export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
              if [[ "$OTHER_GCC64_URL" == *'.tar.gz' ]]; then
-                 mkdir $HOME/gcc-64 -p -v
+                 mkdir -p -v $HOME/gcc-64
                  aria2c -o gcc-aarch64.tar.gz "$OTHER_GCC64_URL"
                  tar -C $HOME/gcc-64 -zxf gcc-aarch64.tar.gz
              elif [[ "$OTHER_GCC64_URL" == *'.zip' ]]; then
-                 mkdir $HOME/gcc-64 -p -v
+                 mkdir -p -v $HOME/gcc-64
                  aria2c -o gcc-aarch64.zip "$OTHER_GCC64_URL" 
                  unzip -q gcc-aarch64.zip -d $HOME/gcc-64
              elif [[ "$OTHER_GCC64_URL" == *'.tar.xz' ]]; then
-                 mkdir $HOME/gcc-64 -p -v
+                 mkdir -p -v $HOME/gcc-64
                  aria2c -o gcc-aarch64.tar.xz "$OTHER_GCC64_URL"         
                  tar -C $HOME/gcc-64 -xf gcc-aarch64.tar.xz
              else
@@ -305,15 +305,15 @@ runs:
              fi
 
              if [[ "$OTHER_GCC32_URL" == *'.tar.gz' ]]; then
-                 mkdir $HOME/gcc-32 -p -v
+                 mkdir -p -v $HOME/gcc-32
                  aria2c -o gcc-arm.tar.gz "$OTHER_GCC32_URL"
                  tar -C $HOME/gcc-32 -zxf gcc-arm.tar.gz
              elif [[ "$OTHER_GCC32_URL" == *'.zip' ]]; then
-                 mkdir $HOME/gcc-32 -p -v
+                 mkdir -p -v $HOME/gcc-32
                  aria2c -o gcc-arm.zip "$OTHER_GCC32_URL" 
                  unzip -q gcc-arm.zip -d $HOME/gcc-32
              elif [[ "$OTHER_GCC32_URL" == *'.tar.xz' ]]; then
-                 mkdir $HOME/gcc-32 -p -v
+                 mkdir -p -v $HOME/gcc-32
                  aria2c -o gcc-arm.tar.xz "$OTHER_GCC32_URL"         
                  tar -C $HOME/gcc-32 -xf gcc-arm.tar.xz
              else
