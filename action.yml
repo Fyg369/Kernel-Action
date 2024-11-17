@@ -415,11 +415,11 @@ runs:
              echo "::group:: Initializing Kali nethunter"
              aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/config.sh -o nconfig.sh &&  bash nconfig.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
              if [ ${{ inputs.nethunter-patch }} = true ]; then
-                 #aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection.patch && git apply add-wifi-injection.patch
-                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/fix-ath9k-naming-conflict.patch && git apply fix-ath9k-naming-conflict.patch
-                 aria2c https://raw.githubusercontent.com/dabao1955/kernel_build_action/main/nethunter/add-rtl88xxau-5.6.4.2-drivers.patch && git apply add-rtl88xxau-5.6.4.2-drivers.patch                 
+                 #aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection.patch && git apply --whitespace=nowarn add-wifi-injection.patch
+                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/fix-ath9k-naming-conflict.patch && git apply --whitespace=nowarn fix-ath9k-naming-conflict.patch
+                 aria2c https://raw.githubusercontent.com/dabao1955/kernel_build_action/main/nethunter/add-rtl88xxau-5.6.4.2-drivers.patch && git apply --whitespace=nowarn add-rtl88xxau-5.6.4.2-drivers.patch                 
                  if [ "$PATCHLEVEL" -lt "19" ]; then
-                     aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection-4.14.patch && git apply add-wifi-injection-4.14.patch
+                     aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection-4.14.patch && git apply --whitespace=nowarn add-wifi-injection-4.14.patch
                  fi
              else
                   echo "skip patch"
@@ -429,7 +429,7 @@ runs:
 
          if [ ${{ inputs.bbrplus }} = true ]; then
              echo "::group:: Initializing bbrplus"
-             aria2c https://raw.githubusercontent.com/UJX6N/bbrplus-4.9/main/convert_official_linux-4.9.x_src_to_bbrplus.patch && git apply convert_official_linux-4.9.x_src_to_bbrplus.patch
+             aria2c https://raw.githubusercontent.com/UJX6N/bbrplus-4.9/main/convert_official_linux-4.9.x_src_to_bbrplus.patch && git apply --whitespace=nowarn convert_official_linux-4.9.x_src_to_bbrplus.patch
              echo "::endgroup::"
          else
              echo "skip patch"
