@@ -286,8 +286,8 @@ runs:
              if [ -d $HOME/clang ]; then
          if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
              echo "::group:: Downloading 3rd gcc"
-             export OTHER_GCC64_URL=${{ inputs.other-gcc32-url }}
-             export OTHER_GCC32_URL=${{ inputs.other-gcc64-url }}
+             export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
+             export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
              if [[ "$OTHER_GCC64_URL" == *'.tar.gz' ]]; then
                  mkdir $HOME/gcc-64 -p -v
                  aria2c -o gcc-aarch64.tar.gz "$OTHER_GCC64_URL"
