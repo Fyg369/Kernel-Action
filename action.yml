@@ -322,8 +322,7 @@ runs:
              fi                  
          fi
          else
-             echo "Please enable 3rd other-gcc32-url and other-gcc64-url."
-             exit 0
+             echo "Error: Please enable 3rd other-gcc32-url and other-gcc64-url." && exit 15
          fi
          else
              echo "::group:: Downloading AOSP GCC"
