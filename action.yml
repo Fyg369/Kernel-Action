@@ -218,7 +218,7 @@ runs:
          if [ ${{ inputs.aosp-clang }} = false ] && [ ${{ inputs.android-ndk }} = false ]; then
              echo "::group:: Downloading 3rd clang"
              export OTHER_CLANG_URL=${{ inputs.other-clang-url }}
-                 mkdir -p -v $HOME/clang             
+             mkdir -p -v $HOME/clang             
              if [[ "$OTHER_CLANG_URL" == *'.tar.gz' ]]; then
                  aria2c -o clang.tar.gz "$OTHER_CLANG_URL"
                  tar -C $HOME/clang/ -zxf clang.tar.gz
@@ -281,13 +281,13 @@ runs:
          fi
 
          if [ ${{ inputs.aosp-gcc }} = true ]; then   
-         if [ ! -z ${{ inputs.other-gcc64-url }} ] || [ ! -z ${{ inputs.other-gcc32-url }} ]; then
-             echo "::group:: Downloading 3rd gcc"
-         if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
+             if [ ! -z ${{ inputs.other-gcc64-url }} ] || [ ! -z ${{ inputs.other-gcc32-url }} ]; then
+                 echo "::group:: Downloading 3rd gcc"
+             if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
              if [ -d $HOME/clang ]; then
              export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
              export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
-                 mkdir -p -v $HOME/gcc-64             
+             mkdir -p -v $HOME/gcc-64             
              if [[ "$OTHER_GCC64_URL" == *'.tar.gz' ]]; then    
                  aria2c -o gcc-aarch64.tar.gz "$OTHER_GCC64_URL"
                  tar -C $HOME/gcc-64 -zxf gcc-aarch64.tar.gz
@@ -301,7 +301,7 @@ runs:
                  git clone "$OTHER_GCC64_URL" $HOME/gcc-64 --depth=${{ inputs.depth }} -b ${{ inputs.other-gcc64-branch }}
              fi
 
-                 mkdir -p -v $HOME/gcc-32
+             mkdir -p -v $HOME/gcc-32
              if [[ "$OTHER_GCC32_URL" == *'.tar.gz' ]]; then
                  aria2c -o gcc-arm.tar.gz "$OTHER_GCC32_URL"
                  tar -C $HOME/gcc-32 -zxf gcc-arm.tar.gz
