@@ -322,7 +322,6 @@ runs:
                      git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ --depth=1 -b android${{ inputs.android-version }}-release $HOME/gcc-32
                  fi
              fi
-             
              if [ ! -d $HOME/gcc-64/bin/ ] || [ ! -d $HOME/gcc-32/bin/ ]; then
                  [ ! -d $HOME/gcc-64/bin/ ] && mv $HOME/gcc-64/*/* $HOME/gcc-64/
                  [ ! -d $HOME/gcc-32/bin/ ] && mv $HOME/gcc-32/*/* $HOME/gcc-32/
