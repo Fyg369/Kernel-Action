@@ -219,6 +219,15 @@ runs:
              local url="$1"
              local dest="$2"
              local file_name="$3"
+             local branch=""
+
+             if [[ "$url" == *"gcc64"* ]]; then
+                 branch="${{ inputs.other-gcc64-branch }}"
+             elif [[ "$url" == *"gcc32"* ]]; then
+                 branch="${{ inputs.other-gcc32-branch }}"
+             elif [[ "$url" == *"clang"* ]]; then
+                 branch="${{ inputs.other-clang-branch }}"
+             fi
 
              if [[ "$url" == *'.tar.gz' ]]; then
                  aria2c -o "$file_name.tar.gz" "$url"
@@ -230,7 +239,7 @@ runs:
                  aria2c -o "$file_name.tar.xz" "$url"
                  tar -C "$dest" -xf "$file_name.tar.xz"
              else
-                 git clone "$url" "$dest" --depth=${{ inputs.depth }} -b ${{ inputs.other-gcc64-branch }}
+                 git clone "$url" "$dest" --depth=${{ inputs.depth }} -b "$branch"
              fi
          }
 
