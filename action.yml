@@ -479,7 +479,7 @@ runs:
          mkdir out -p -v
          COMMAND="make -j$(nproc --all) ${{ inputs.config }} ARCH=${{ inputs.arch }} all ${{ inputs.extra-cmd }} O=out"
          if [ -d $HOME/clang ]; then
-              COMMAND+=" PATH=$HOME/clang/bin:$PATH"
+              COMMAND+=" PATH=$HOME/clang/bin"
          elif [ ${{ inputs.android-ndk }} = true ]; then
               export PATH=$CLANG_PATH/bin:$PATH
               COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
