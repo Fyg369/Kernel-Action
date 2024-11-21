@@ -29,7 +29,7 @@ jobs:
           config: mcd_ksu_defconfig
           arch: arm64
           aosp-gcc: true
-          other-clang-url: https://kali.download/nethunter-images/toolchains/google_clang-10.0.4.tar.xz
+          other-clang-url: https://android.googlesource.com/platform//prebuilts/clang/host/linux-x86/+archive/refs/tags/android-14.0.0_r0.78/clang-r416183b.tar.gz
           other-gcc32-url: https://github.com/pomelohan/arm-eabi-gcc
           other-gcc32-branch: master
           other-gcc64-url: https://github.com/pomelohan/linux_aarch64-elf-gcc
