@@ -102,7 +102,7 @@ Or use the [preset workflow file](https://github.com/dabao1955/kernel_build_acti
 | extra-cmd | false | Compile the kernel with extra options, such as LLVM=1 and LD=ld.lld | AS=llvm-as |
 
 ## Todo
-- Modify unreasonable options
+- fix uncomfortable code
 
 ## FAQ
 > [!CAUTION]
