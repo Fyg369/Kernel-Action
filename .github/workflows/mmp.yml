@@ -33,7 +33,7 @@ jobs:
           #aosp-clang: true
           other-clang-url: https://github.com/kdrag0n/proton-clang
           other-clang-branch: master        
-          other-gcc32-url: https://github.com/pomelohan/arm-eabi-gcc
+          other-gcc32-url: https://github.com/pomelohan/linux_arm-eabi-gcc
           other-gcc32-branch: master
           other-gcc64-url: https://github.com/pomelohan/linux_aarch64-elf-gcc
           other-gcc64-branch: master
