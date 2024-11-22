@@ -28,10 +28,15 @@ jobs:
           kernel-branch: mcd-OOS-R
           config: mcd_ksu_defconfig
           arch: arm64
+          extra-cmd: LLVM=1 SUBARCH=arm64 BUILD_INITRAMFS=1
           aosp-gcc: true
           #aosp-clang: true
           other-clang-url: https://github.com/kdrag0n/proton-clang
-          other-clang-branch: master
+          other-clang-branch: master        
+          other-gcc32-url: https://github.com/pomelohan/arm-eabi-gcc
+          other-gcc32-branch: master
+          other-gcc64-url: https://github.com/pomelohan/linux_aarch64-elf-gcc
+          other-gcc64-branch: master          
           ksu: true
           ksu-version: main
           ksu-other: true
