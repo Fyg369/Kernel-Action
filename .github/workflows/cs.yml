@@ -23,10 +23,10 @@ jobs:
     - name: Cs CI
       uses: ./
       with:
-          kernel-url: https://github.com/Fyj69/mcd_kernel_oneplus_sdm845
+          kernel-url: https://github.com/AcmeUI-Devices/android_kernel_xiaomi_cas
           kernel-dir: cs
-          kernel-branch: mcd-OOS-R
-          config: mcd_ksu_defconfig
+          kernel-branch: taffy
+          config: cas_defconfig
           arch: arm64
           extra-cmd: LLVM=1
           aosp-gcc: true
