@@ -504,7 +504,6 @@ runs:
                      COMMAND+=" CC='ccache $HOME/gcc-64/aarch64-elf/bin/aarch64-elf-gcc'"
                  elif [ -d $HOME/gcc-64 ]; then
                      COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
-                 fi
              else
                  if [ -d $HOME/gcc-32/arm-eabi ]; then
                      COMMAND+=" CC='ccache $HOME/gcc-32/arm-eabi/bin/arm-eabi-gcc'"
