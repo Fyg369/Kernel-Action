@@ -499,18 +499,19 @@ runs:
                  COMMAND+=" CC=clang"
              fi
          else
-         if [ ${{ inputs.ccache }} = true ]; then
+             if [ ${{ inputs.ccache }} = true ]; then
                  if [ -d $HOME/gcc-64/aarch64-elf ]; then
-                         COMMAND+=" CC='ccache $HOME/gcc-64/aarch64-elf/bin/aarch64-elf-gcc'"
+                     COMMAND+=" CC='ccache $HOME/gcc-64/aarch64-elf/bin/aarch64-elf-gcc'"
                  elif [ -d $HOME/gcc-64 ]; then
-                         COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
+                     COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
                  fi
-         else
+             else
                  if [ -d $HOME/gcc-32/arm-eabi ]; then
-                         COMMAND+=" CC='ccache $HOME/gcc-32/arm-eabi/bin/arm-eabi-gcc'"
+                     COMMAND+=" CC='ccache $HOME/gcc-32/arm-eabi/bin/arm-eabi-gcc'"
                  elif [ -d $HOME/gcc-32 ]; then
-                         COMMAND+=" CC='ccache $HOME/gcc-32/bin/arm-linux-androidabeihf-gcc'"
+                     COMMAND+=" CC='ccache $HOME/gcc-32/bin/arm-linux-androidabeihf-gcc'"
                  fi
+             fi
          fi
          echo "using command: ${COMMAND}"
          eval ${COMMAND}
