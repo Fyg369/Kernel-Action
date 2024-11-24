@@ -29,7 +29,7 @@ jobs:
           config: mcd_ksu_defconfig
           arch: arm64
           extra-cmd: LLVM=1
-          #aosp-gcc: true
+          aosp-gcc: false
           #aosp-clang: true
           other-clang-url: https://github.com/kdrag0n/proton-clang
           other-clang-branch: master        
