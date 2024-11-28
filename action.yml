@@ -500,14 +500,10 @@ runs:
          fi
          if [ ${{ inputs.aosp-gcc }} = true ]; then
             if [ -d $HOME/gcc-64/${gcc64} ] && [ -d $HOME/gcc-32/${gcc32} ]; then
-             COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/${gcc64}/bin/${gcc64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/${gcc32}/bin/${gcc32}- CLANG_TRIPLE=aarch64-linux-gnu-"
-         elif [ -d $HOME/gcc-64/${gcc64} ] && [ -d $HOME/gcc-32 ]; then
-             COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/${gcc64}/bin/${gcc64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
-         elif [ -d $HOME/gcc-64 ] && [ -d $HOME/gcc-32/${gcc32} ]; then
-             COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$HOME/gcc-32/${gcc32}/bin/${gcc32}- CLANG_TRIPLE=aarch64-linux-gnu-"
-         elif [ -d $HOME/gcc-64 ] && [ -d $HOME/gcc-32 ]; then
-             COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
-         fi
+               COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/${gcc64}/bin/${gcc64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/${gcc32}/bin/${gcc32}- CLANG_TRIPLE=aarch64-linux-gnu-"
+            elif [ -d $HOME/gcc-64 ] && [ -d $HOME/gcc-32 ]; then
+               COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
+            fi
          elif [ ${{ inputs.android-ndk }} = true ]; then
            COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
