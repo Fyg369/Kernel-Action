@@ -350,8 +350,7 @@ runs:
          fi
 
          if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
-             for gcc_dir in "$HOME/gcc-64" "$HOME/gcc-32"; do
-                 find "$gcc_dir"/*/*/bin -type d -exec sh -c 'mv "$(dirname {})"/* "$gcc_dir"/' _ {} \; -quit || true                 
+             for gcc_dir in "$HOME/gcc-64" "$HOME/gcc-32"; do               
                  for sub_dir in "aarch64-linux-android" "arm-linux-androideabi"; do
                      [ -d "$gcc_dir/$sub_dir" ] && continue
                      for file in "$gcc_dir/bin"/*; do
