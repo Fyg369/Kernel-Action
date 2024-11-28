@@ -349,9 +349,13 @@ runs:
              rm -f "$HOME/clang/bin/ld"
          fi
 
-         if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
+         f [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
              for gcc_dir in "$HOME/gcc-64" "$HOME/gcc-32"; do
-                 find "$gcc_dir"/*/*/bin -type d 2>/dev/null -exec sh -c 'mv "$(dirname {})"/* "$gcc_dir"/' _ {} \; -quit
+                 find "$gcc_dir"/*/*/bin -type d -exec sh -c '
+                     if [ -d "$(dirname {})" ]; then
+                         mv "$(dirname {})"/* "$gcc_dir"/
+                     fi
+                 ' _ {} \; -quit
                  for file in "$gcc_dir/bin"/*; do
                      file_name=$(basename "$file")
                      matched_dir=""
