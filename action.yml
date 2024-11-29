@@ -353,28 +353,20 @@ runs:
              for gcc_dir in "$HOME/gcc-64" "$HOME/gcc-32"; do
                  find "$gcc_dir"/*/*/bin -type d -exec sh -c 'mv "$(dirname {})"/* "$gcc_dir"/' _ {} \; -quit || true
                  for sub_dir in "aarch64-linux-android" "arm-linux-androideabi"; do
-                 if [ ! -d "$gcc_dir/$sub_dir" ]; then
-                     for file in "$gcc_dir/bin"/*; do
-                         file_name=$(basename "$file")
-                         matched_dir=""
-                         folders=$(find "$gcc_dir" -mindepth 1 -maxdepth 1 -type d | sort -r)
-                         for folder in $folders; do
-                             folder_name=$(basename "$folder")
-                             if [[ "$file_name" == "$folder_name"* ]]; then
-                                 matched_dir="$folder_name"
-                             break
+                     [ -d "$gcc_dir/$sub_dir" ] || {
+                         for file in "$gcc_dir/bin"/*; do
+                             file_name=$(basename "$file")
+                             matched_dir=$(find "$gcc_dir" -mindepth 1 -maxdepth 1 -type d -name "$file_name*" | head -n 1)
+                             if [ -n "$matched_dir" ]; then
+                                 case "$gcc_dir" in
+                                     "$HOME/gcc-64") gcc64=$(basename "$matched_dir") ;;
+                                     "$HOME/gcc-32") gcc32=$(basename "$matched_dir") ;;
+                                 esac
                              fi
                          done
-                         if [ -n "$matched_dir" ]; then
-                             case "$gcc_dir" in
-                                 "$HOME/gcc-64") gcc64="$matched_dir" ;;
-                                 "$HOME/gcc-32") gcc32="$matched_dir" ;;
-                             esac
-                         fi
-                     done
-                 fi
+                     }
+                 done
              done
-         done
          fi
          
          function version_gt() { test "$(echo -e "$1\n$2" | sort -V | tail -n1)" == "$1"; }
