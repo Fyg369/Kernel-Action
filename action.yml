@@ -362,14 +362,14 @@ runs:
                          for file in "$gcc_dir/bin"/*; do
                              file_name=$(basename "$file")
                              matched_dir=""
-                             folders=$(find "$gcc_dir" -mindepth 1 -maxdepth 1 -type d | sort -r)                
+                             folders=$(find "$gcc_dir" -mindepth 1 -maxdepth 1 -type d | sort -r)
                              for folder in $folders; do
                                  folder_name=$(basename "$folder")
                                  if [[ "$file_name" == "$folder_name"* ]]; then
                                      matched_dir="$folder_name"
                                      break
                                  fi
-                             done               
+                             done
                              if [ -n "$matched_dir" ]; then
                                  case "$gcc_dir" in
                                      "$HOME/gcc-64") gcc64="$matched_dir" ;;
