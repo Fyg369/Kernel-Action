@@ -361,20 +361,14 @@ runs:
                      for file in "$gcc_dir/bin"/*; do
                          file_name=$(basename "$file")
                          matched_dir=""
-                         folders=$(find "$gcc_dir" -mindepth 1 -maxdepth 1 -type d | sort -r)
-                         for folder in $folders; do
+                         for folder in $(find "$gcc_dir" -mindepth 1 -maxdepth 1 -type d | sort -r); do
                              folder_name=$(basename "$folder")
-                             if [[ "$file_name" == "$folder_name"* ]]; then
-                                 matched_dir="$folder_name"
-                                 break
-                             fi
+                             [[ "$file_name" == "$folder_name"* ]] && matched_dir="$folder_name" && break
                          done
-                         if [ -n "$matched_dir" ]; then
-                             case "$gcc_dir" in
-                                 "$HOME/gcc-64") gcc64=$(basename "$matched_dir") ;;
-                                 "$HOME/gcc-32") gcc32=$(basename "$matched_dir") ;;
-                             esac
-                         fi
+                         [ -n "$matched_dir" ] && case "$gcc_dir" in
+                             "$HOME/gcc-64") gcc64="$matched_dir" ;;
+                             "$HOME/gcc-32") gcc32="$matched_dir" ;;
+                         esac
                      done
                  fi
              done
