@@ -352,23 +352,16 @@ runs:
          if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
              for gcc_dir in "$HOME/gcc-64" "$HOME/gcc-32"; do
                  find "$gcc_dir"/*/*/bin -type d -exec sh -c 'mv "$(dirname {})"/* "$gcc_dir"/' _ {} \; -quit || true
-                 for file in "$gcc_dir/bin"/*; do
-                     file_name=$(basename "$file")
-                     matched_dir=""
-                     folders=$(find "$gcc_dir" -mindepth 1 -maxdepth 1 -type d | sort -r)
-                     for folder in $folders; do
-                         folder_name=$(basename "$folder")
-                         if [[ "$file_name" == "$folder_name"* ]]; then
-                             matched_dir="$folder_name"
-                             break
-                         fi
-                     done
-                     if [ -n "$matched_dir" ]; then
-                         case "$gcc_dir" in
-                             "$HOME/gcc-64") gcc64="$matched_dir" ;;
-                             "$HOME/gcc-32") gcc32="$matched_dir" ;;
+                 for sub_dir in "aarch64-linux-android" "arm-linux-androideabi"; do
+                     [ ! -d "$gcc_dir/$sub_dir" ] || for file in "$gcc_dir/bin"/*; do
+                         file_name=$(basename "$file")
+                         matched_dir=$(find "$gcc_dir" -mindepth 1 -maxdepth 1 -type d | sort -r | 
+                                       grep -E "^$gcc_dir/[^/]+/$file_name" | head -n 1)
+                         [ -n "$matched_dir" ] && case "$gcc_dir" in
+                             "$HOME/gcc-64") gcc64="${matched_dir##*/}" ;;
+                             "$HOME/gcc-32") gcc32="${matched_dir##*/}" ;;
                          esac
-                     fi
+                     done
                  done
              done
          fi
@@ -507,7 +500,7 @@ runs:
               COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
          fi
          if [ ${{ inputs.aosp-gcc }} = true ]; then
-            if [ -d $HOME/gcc-64/${gcc64} ] && [ -d $HOME/gcc-32/${gcc32} ]; then
+            if [ -n "${gcc64}" ] && [ -n "${gcc32}" ]; then
                COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/${gcc64}/bin/${gcc64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/${gcc32}/bin/${gcc32}- CLANG_TRIPLE=aarch64-linux-gnu-"
             elif [ -d $HOME/gcc-64 ] && [ -d $HOME/gcc-32 ]; then
                COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
@@ -523,13 +516,13 @@ runs:
              fi
          else
              if [ ${{ inputs.ccache }} = true ]; then
-                 if [ -d $HOME/gcc-64/${gcc64} ]; then
+                 if [ -n "${gcc64}" ]; then
                      COMMAND+=" CC='ccache $HOME/gcc-64/${gcc64}/bin/${gcc64}-gcc'"
                  elif [ -d $HOME/gcc-64 ]; then
                      COMMAND+=" CC='ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc'"
                  fi
              else
-                 if [ -d $HOME/gcc-32/${gcc32} ]; then
+                 if [ -n "${gcc32}" ]; then
                      COMMAND+=" CC='ccache $HOME/gcc-32/${gcc32}/bin/${gcc32}-gcc'"
                  elif [ -d $HOME/gcc-32 ]; then
                      COMMAND+=" CC='ccache $HOME/gcc-32/bin/arm-linux-androidabeihf-gcc'"
