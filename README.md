@@ -15,8 +15,8 @@ A Workflow to build Android Kernel automatically
 
 
 
-## Note
- This workflow is universal. You need to have a certain foundation in writing github workflows and a little knowledge of the Android kernel to use this.
+> [!IMPORTANT]
+> This workflow is universal. You need to have a certain foundation in writing github workflows and a little knowledge of the Android kernel to use this.
 
 ## How to use?
 - First, you need to determine the kernel source code and configuration files.
