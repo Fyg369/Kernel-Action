@@ -1,4 +1,5 @@
 {
+  "private": true,
   "scripts": {
     "check": "npx ts-node index.ts",
     "clean": "npx ts-node clean.ts"
