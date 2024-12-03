@@ -28,7 +28,7 @@ jobs:
           kernel-branch: mcd-OOS-R
           config: mcd_ksu_defconfig
           arch: arm64
-          extra-cmd: LLVM=1
+          #extra-cmd: LLVM=1
           aosp-gcc: true
           other-clang-url: https://github.com/kdrag0n/proton-clang
           other-clang-branch: master        
@@ -48,5 +48,5 @@ jobs:
           nethunter: true
           nethunter-patch: true
           bbrplus: true
-          ccache: true
+          #ccache: true
           anykernel3: true
