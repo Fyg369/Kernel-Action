@@ -347,6 +347,8 @@ runs:
          cd kernel/${{ inputs.kernel-dir }}
          if ! grep -qsi "LD *= *ld.lld" Makefile && [ -f "$HOME/clang/bin/ld" ]; then
              rm -f "$HOME/clang/bin/ld"
+             rm -f "$HOME/gcc-64/bin/ld"
+             rm -f "$HOME/gcc-32/bin/ld"
          fi
 
          if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
