@@ -345,12 +345,6 @@ runs:
          fi
 
          cd kernel/${{ inputs.kernel-dir }}
-         if ! grep -qsi "LD *= *ld.lld" Makefile && [ -f "$HOME/clang/bin/ld" ]; then
-             rm -f "$HOME/clang/bin/ld"
-             rm -f "$HOME/gcc-64/bin/ld"
-             rm -f "$HOME/gcc-32/bin/ld"
-         fi
-
          if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
              declare -A sub_dirs=(
                  ["$HOME/gcc-64"]="aarch64-linux-android"
@@ -374,6 +368,10 @@ runs:
                      done
                  fi
              done
+         fi
+
+         if [ -f "$HOME/clang/bin/ld" ] || [ -f "$HOME/gcc-64/bin/${gcc64}-ld" ]; then
+             rm -f "$HOME/clang/bin/ld" "$HOME/gcc-64/bin/${gcc64}-ld"
          fi
          
          function version_gt() { test "$(echo -e "$1\n$2" | sort -V | tail -n1)" == "$1"; }
