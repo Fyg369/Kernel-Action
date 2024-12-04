@@ -26,7 +26,9 @@ jobs:
           arch: arm64
           extra-cmd: LLVM=1
           aosp-gcc: true
-          aosp-clang: true
+          other-clang-url: https://kali.download/nethunter-images/toolchains/google_clang-10.0.4.tar.xz
+          other-gcc32-url: https://kali.download/nethunter-images/toolchains/google_armhf-4.9.tar.xz
+          other-gcc64-url: https://kali.download/nethunter-images/toolchains/google_aarch64-4.9.tar.xz
           ksu: true
           ksu-version: main
           ksu-other: true
