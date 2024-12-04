@@ -1,0 +1,47 @@
+name: Custom
+on:
+  workflow_dispatch:
+jobs:
+  lint:
+    uses: ./.github/workflows/check.yml
+  ci-test:
+    needs:
+      - lint
+    name: ci-custom
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Custom CI
+      uses: ./
+      with:
+          kernel-url: https://github.com/AcmeUI-Devices/android_kernel_xiaomi_cas
+          kernel-dir: custom
+          kernel-branch: taffy
+          config: cas_defconfig
+          arch: arm64
+          #extra-cmd: LLVM=1
+          aosp-gcc: true
+          other-clang-url: https://github.com/kdrag0n/proton-clang
+          other-clang-branch: master        
+          other-gcc32-url: https://github.com/pomelohan/linux_arm-eabi-gcc
+          other-gcc32-branch: master
+          other-gcc64-url: https://github.com/pomelohan/linux_aarch64-elf-gcc
+          other-gcc64-branch: master 
+          ksu: true
+          ksu-version: main
+          ksu-other: true
+          ksu-url: https://github.com/rsuntk/KernelSU
+          android-version: 12
+          aosp-clang-version: r416183b
+          disable-lto: true
+          disable_cc_werror: true
+          lxc: true
+          nethunter: true
+          nethunter-patch: true
+          bbrplus: true
+          anykernel3: true
