@@ -455,11 +455,11 @@ runs:
          if [ ${{ inputs.disable_fst }} = true ]; then  
              grep -q "CONFIG_CC_STACKPROTECTOR_STRONG=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || sed -i 's/CONFIG_CC_STACKPROTECTOR_STRONG=y/# CONFIG_CC_STACKPROTECTOR_STRONG is not set/g' arch/${{ inputs.arch }}/configs/${{ inputs.config }}    
          fi
-         
+
          if [ ${{ inputs.disable_cc_werror }} = true ]; then
             grep -q "CONFIG_CC_WERROR=n" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_CC_WERROR=n" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
          fi
-         
+
          if [ ${{ inputs.kprobes }} = true ]; then
             grep -q "CONFIG_MODULES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_MODULES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
             grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_KPROBES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
