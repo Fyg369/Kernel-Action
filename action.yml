@@ -296,7 +296,7 @@ runs:
 
          if [ ${{ inputs.aosp-gcc }} = true ]; then
              if [ ! -z ${{ inputs.other-gcc64-url }} ] || [ ! -z ${{ inputs.other-gcc32-url }} ]; then
-                 echo "::group:: Downloading 3rd gcc"
+                 echo "::group:: Downloading 3RD GCC"
                  if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
                      if [ -d $HOME/clang ]; then
                          export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
