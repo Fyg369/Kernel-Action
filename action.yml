@@ -243,7 +243,7 @@ runs:
          if [ ${{ inputs.aosp-clang }} = false ] && [ ${{ inputs.android-ndk }} = false ]; then
              echo "::group:: Downloading Third party clang"
              export OTHER_CLANG_URL=${{ inputs.other-clang-url }}
-             mkdir -p -v $HOME/clang 
+             mkdir -p -v $HOME/clang
              download_and_extract "$OTHER_CLANG_URL" "clang" "$HOME/clang" "${{ inputs.other-clang-branch }}"
              [ ! -d $HOME/clang/bin/ ] && mv $HOME/clang/*/* $HOME/clang/       
          fi
