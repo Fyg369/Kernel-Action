@@ -297,11 +297,10 @@ runs:
                  echo "::group:: Downloading Third party gcc"
                  if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
                      if [ -d $HOME/clang ]; then
+                         mkdir -p -v $HOME/gcc-64 $HOME/gcc-32
                          export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
                          export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
-                         mkdir -p -v $HOME/gcc-64
                          download_and_extract "$OTHER_GCC64_URL" "gcc-aarch64" "$HOME/gcc-64" "${{ inputs.other-gcc64-branch }}"
-                         mkdir -p -v $HOME/gcc-32
                          download_and_extract "$OTHER_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "${{ inputs.other-gcc32-branch }}"
                      fi
                  else
@@ -310,10 +309,9 @@ runs:
              else
                  echo "::group:: Downloading AOSP GCC"
                  if [ -d $HOME/clang ]; then
-                     mkdir -p -v $HOME/gcc-64
+                     mkdir -p -v $HOME/gcc-64 $HOME/gcc-32
                      aria2c -o gcc-aarch64.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
                      tar -C $HOME/gcc-64 -zxf gcc-aarch64.tar.gz
-                     mkdir -p -v $HOME/gcc-32
                      aria2c -o gcc-arm.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
                      tar -C $HOME/gcc-32 -zxf gcc-arm.tar.gz
                  elif [ ${{ inputs.aosp-clang }} = true ] && [ ${{ inputs.android-ndk }} = true ]; then
