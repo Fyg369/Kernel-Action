@@ -240,12 +240,7 @@ runs:
              esac
          }
 
-         if [ ${{ inputs.aosp-clang }} = false ] && [ ${{ inputs.android-ndk }} = false ]; then
-             echo "::group:: Downloading Third party clang"
-             export OTHER_CLANG_URL=${{ inputs.other-clang-url }}
-             download_and_extract "$OTHER_CLANG_URL" "clang" "$HOME/clang" "${{ inputs.other-clang-branch }}"
-             [ ! -d $HOME/clang/bin/ ] && mv $HOME/clang/*/* $HOME/clang/
-         else
+         if [ ${{ inputs.aosp-clang }} = true ]; then
              echo "::group:: Downloading AOSP clang"
              if [ ${{ inputs.aosp-gcc }} = true ]; then
                  mkdir $HOME/clang -p -v
@@ -259,9 +254,14 @@ runs:
                  echo "Please enable aosp-gcc."
                  exit 127
              fi
+         else
+             echo "::group:: Downloading Third party clang"
+             export OTHER_CLANG_URL=${{ inputs.other-clang-url }}
+             download_and_extract "$OTHER_CLANG_URL" "clang" "$HOME/clang" "${{ inputs.other-clang-branch }}"
+             [ ! -d $HOME/clang/bin/ ] && mv $HOME/clang/*/* $HOME/clang/
          fi
          echo "::endgroup::"
-
+         
          if [ ${{ inputs.android-ndk }} = true ]; then
              echo "::group:: Downloading Android NDK"
              if [ ${{ inputs.aosp-gcc }} = false ]; then
