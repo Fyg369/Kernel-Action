@@ -261,7 +261,7 @@ runs:
              [ ! -d $HOME/clang/bin/ ] && mv $HOME/clang/*/* $HOME/clang/
          fi
          echo "::endgroup::"
-         
+
          if [ ${{ inputs.android-ndk }} = true ]; then
              echo "::group:: Downloading Android NDK"
              if [ ${{ inputs.aosp-gcc }} = false ]; then
