@@ -245,6 +245,20 @@ runs:
              export OTHER_CLANG_URL=${{ inputs.other-clang-url }}
              download_and_extract "$OTHER_CLANG_URL" "clang" "$HOME/clang" "${{ inputs.other-clang-branch }}"
              [ ! -d $HOME/clang/bin/ ] && mv $HOME/clang/*/* $HOME/clang/
+         else
+             echo "::group:: Downloading AOSP clang"
+             if [ ${{ inputs.aosp-gcc }} = true ]; then
+                 mkdir $HOME/clang -p -v
+                 if [ ! -z ${{ inputs.android-version }} ]; then
+                     aria2c -o aosp-clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android${{ inputs.android-version }}-release/clang-${{ inputs.aosp-clang-version }}.tar.gz
+                 else
+                     aria2c -o aosp-clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-${{ inputs.aosp-clang-version }}.tar.gz
+                 fi
+                 tar -C $HOME/clang -zxf aosp-clang.tar.gz
+             else
+                 echo "Please enable aosp-gcc."
+                 exit 127
+             fi
          fi
          echo "::endgroup::"
 
@@ -272,23 +286,6 @@ runs:
                  ln -s -v "$file" "aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))-${file#llvm-}"
              done
              cd $HOMES
-         fi
-
-         if [ ${{ inputs.aosp-clang }} = true ]; then
-             echo "::group:: Downloading AOSP clang"
-             if [ ${{ inputs.aosp-gcc }} = true ]; then
-                 mkdir $HOME/clang -p -v
-                 if [ ! -z ${{ inputs.android-version }} ]; then
-                     aria2c -o aosp-clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android${{ inputs.android-version }}-release/clang-${{ inputs.aosp-clang-version }}.tar.gz
-                 else
-                     aria2c -o aosp-clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-${{ inputs.aosp-clang-version }}.tar.gz
-                 fi
-                 tar -C $HOME/clang -zxf aosp-clang.tar.gz
-             else
-                 echo "Please enable aosp-gcc."
-                 exit 127
-             fi
-             echo "::endgroup::"
          fi
 
          if [ ${{ inputs.aosp-gcc }} = true ]; then
