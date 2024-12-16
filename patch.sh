@@ -65,7 +65,7 @@ for i in "${patch_files[@]}"; do
         ;;
 
     fs/namespace.c)
-        sed -i '#static inline bool may_mandlock(void)#,#\}# { #\}#a \\
+        sed -i '/static inline bool may_mandlock(void)/, /}/ { /}/a \\
 #ifdef CONFIG_KSU\
 static int can_umount(const struct path *path, int flags)\
 {\
