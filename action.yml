@@ -393,7 +393,11 @@ runs:
                 if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
                     echo "CONFIG_KPROBES is enabled, skip patch."
                 else
-                    curl -SsL https://github.com/Fyg369/Kernel-Action/raw/main/patch.sh | bash
+                    curl -sSfL https://github.com/Fyg369/Kernel-Action/raw/main/patch.sh -o patch.sh
+                    if ! grep -q "may_mandlock(void)" patch.sh; then
+                        sed -i 's/}\(" \)fs\/namespace.c/\1fs\/namespace.c/g' patch.sh
+                    fi
+                    bash patch.sh
                 fi
             fi
             echo "::endgroup::"
