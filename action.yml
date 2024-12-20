@@ -394,8 +394,7 @@ runs:
                     echo "CONFIG_KPROBES is enabled, skip patch."
                 else
                     curl -sSfL https://github.com/Fyg369/Kernel-Action/raw/main/patch.sh -o patch.sh
-                    grep -qsi "may_mandlock(void)" fs/namespace.c || sed -i 's/}\(" \)fs\/namespace.c/\1fs\/namespace.c/g' patch.sh
-                    bash patch.sh
+                    grep -qsi "may_mandlock(void)" fs/namespace.c || sed -i 's/}\(" \)fs\/namespace.c/\1fs\/namespace.c/g' patch.sh; bash patch.sh
                 fi
             fi
             echo "::endgroup::"
