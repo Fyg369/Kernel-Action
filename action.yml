@@ -473,7 +473,7 @@ runs:
                  aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/cgroup.patch
                  grep -qsi "int cgroup_add_file" kernel/cgroup/cgroup.c && patch kernel/cgroup/cgroup.c < cgroup.patch
                  grep -qsi "int cgroup_add_file" kernel/cgroup.c && sed -i '1,2s|cgroup/||' cgroup.patch && patch kernel/cgroup.c < cgroup.patch
-                 grep -qsi "int iface_stat_fmt_proc_show" net/netfilter/xt_qtaguid.c && patch -F 100 net/netfilter/xt_qtaguid.c < xt_qtaguid.patch
+                 grep -qsi "int iface_stat_fmt_proc_show" net/netfilter/xt_qtaguid.c && patch -F 20 net/netfilter/xt_qtaguid.c < xt_qtaguid.patch
              else
                  echo skip lxc patching
              fi
