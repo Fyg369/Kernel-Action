@@ -393,8 +393,8 @@ runs:
                 if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
                     echo "CONFIG_KPROBES is enabled, skip patch."
                 else
-                    curl -sSfL https://github.com/Fyg369/Kernel-Action/raw/main/patch.sh -o patch.sh
-                    grep -qsi "may_mandlock(void)" fs/namespace.c || sed -i 's/}\(" \)fs\/namespace.c/\1fs\/namespace.c/g' patch.sh; bash patch.sh
+                    aria2c https://github.com/Fyg369/Kernel-Action/raw/main/patch.sh
+                    grep -qsi "may_mandlock(void)" fs/namespace.c || sed -i '109s|}||' patch.sh; bash patch.sh
                 fi
             fi
             echo "::endgroup::"
@@ -471,8 +471,9 @@ runs:
              if [ ${{ inputs.lxc-patch }} = true ]; then
                  aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/xt_qtaguid.patch
                  aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/cgroup.patch
-                 patch kernel/cgroup/cgroup.c < cgroup.patch
-                 patch net/netfilter/xt_qtaguid.c < xt_qtaguid.patch
+                 grep -qsi "int cgroup_add_file" kernel/cgroup/cgroup.c && patch kernel/cgroup/cgroup.c < cgroup.patch
+                 grep -qsi "int iface_stat_fmt_proc_show" net/netfilter/xt_qtaguid.c && patch net/netfilter/xt_qtaguid.c < xt_qtaguid.patch
+                 grep -qsi "int cgroup_add_file" kernel/cgroup.c && sed -i '1,2s|cgroup/||' cgroup.patch && patch kernel/cgroup.c < cgroup.patch
              else
                  echo skip lxc patching
              fi
