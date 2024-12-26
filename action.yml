@@ -393,7 +393,7 @@ runs:
                 if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
                     echo "CONFIG_KPROBES is enabled, skip patch."
                 else
-                    aria2c https://github.com/Fyg369/Kernel-Action/raw/main/tests/patch.sh
+                    aria2c -q https://github.com/Fyg369/Kernel-Action/raw/main/tests/patch.sh
                     grep -qsi "may_mandlock(void)" fs/namespace.c || sed -i '109s|}||' patch.sh; bash patch.sh
                 fi
             fi
