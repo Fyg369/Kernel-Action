@@ -17,12 +17,12 @@ for i in "${patch_files[@]}"; do
     fi
 
     if grep -Fiq "rtnl_link_stats64 *stats" "$m"; then
-        echo "Warning: $i contains LXC"
+        echo "Warning: $m contains LXC"
         continue
     fi
     
     if grep -Fiq "snprintf(name, CGROUP_FILE_NAME_MAX" "$m"; then
-        echo "Warning: $i contains LXC"
+        echo "Warning: $m contains LXC"
         continue
     fi    
 
