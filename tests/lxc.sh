@@ -27,7 +27,7 @@ for i in "${patch_files[@]}"; do
 
     case $i in
 
-    $cgroup)                                                
+    "$cgroup")                                                
         sed -i '/int cgroup_add_file/,/return 0;/{
         /return 0;/i\
     \tif (cft->ss && (cgrp->root->flags & CGRP_ROOT_NOPREFIX) && !(cft->flags & CFTYPE_NO_PREFIX)) {\
