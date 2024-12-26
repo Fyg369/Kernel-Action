@@ -16,6 +16,7 @@ if (fileExist) {
         try {
             fs.unlinkSync("tests/yarn.lock");
             fs.unlinkSync("tests/patch.sh");
+            fs.unlinkSync("tests/lxc.sh");
             fs.unlinkSync("tests/shfmt");
             fs.rmdirSync("tests/node_modules", { recursive: true });
         } catch (error) {
