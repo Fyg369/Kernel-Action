@@ -78,7 +78,7 @@ Or use the [preset workflow file](https://github.com/dabao1955/kernel_build_acti
 | ksu-url | false | Ude 3rd KernelSU | https://github.com/xxx/KernelSU/ |
 | bbrplus | false | | false |
 | disable-lto | false | | false |
-| disable_fst | false | | false |
+| disable_fst | false | Disable fstack-protector-strong (clang-r383902b) | false |
 | disable_cc_werror | false | | false |
 | kprobes | false | Enable kprobes to config | false |
 | lxc | false | Enable LXC and docker to config | false | 
