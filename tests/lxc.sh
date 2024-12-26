@@ -16,7 +16,7 @@ for i in "${patch_files[@]}"; do
         continue
     fi
 
-    if grep -Fiq "rtnl_link_stats64 *stats" "$m"; then
+    if grep -Fiq "struct rtnl_link_stats64 *stats" "$m"; then
         echo "Warning: $m contains LXC"
         continue
     fi
