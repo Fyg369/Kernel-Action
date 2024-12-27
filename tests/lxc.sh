@@ -16,14 +16,14 @@ patch_files=(
 for i in "${patch_files[@]}"; do
 
     if [[ "$i" == "$cgroup" ]]; then
-        if grep -Fiq "snprintf(name, CGROUP_FILE_NAME_MAX" "$i"; then
+        if grep -Fq "snprintf(name, CGROUP_FILE_NAME_MAX" "$i"; then
             echo "Warning: $i contains LXC"
             continue
         fi
     fi
 
     if [[ "$i" == "net/netfilter/xt_qtaguid.c" ]]; then
-        if grep -Fiq "struct rtnl_link_stats64 *stats" "$i"; then
+        if grep -Fq "struct rtnl_link_stats64 *stats" "$i"; then
             echo "Warning: $i contains LXC"
             continue
         fi
