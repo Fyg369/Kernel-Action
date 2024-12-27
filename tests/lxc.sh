@@ -2,7 +2,7 @@
 
 set -e
 
-if grep -q "int cgroup_add_file" kernel/cgroup.c; then
+if grep -q "int cgroup_add_file" kernel/cgroup.c >/dev/null 2>&1; then
     cgroup='kernel/cgroup.c'
 else
     cgroup='kernel/cgroup/cgroup.c'
