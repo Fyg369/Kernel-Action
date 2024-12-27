@@ -335,7 +335,7 @@ runs:
 
          cd kernel/${{ inputs.kernel-dir }}
          for GCC_DIR in "$HOME/gcc-64" "$HOME/gcc-32"; do
-             find "$GCC_DIR"/*/*/bin -type d -exec sh -c 'mv "$(dirname "{}")"/* "$GCC_DIR"/' _ {} \; -quit > /dev/null 2>&1 || true
+             find "$GCC_DIR"/*/*/bin -type d -exec sh -c 'mv "$(dirname "{}")"/* "$GCC_DIR"/' _ {} \; -quit >/dev/null 2>&1 || true
              for FILE in "$GCC_DIR/bin"/*; do
                  FILE_NAME=$(basename "$FILE")
                  MATCHED_DIR=""
