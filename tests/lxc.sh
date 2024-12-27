@@ -6,7 +6,7 @@ if grep -q "int cgroup_add_file" kernel/cgroup.c; then
     cgroup='kernel/cgroup.c'
 else
     cgroup='kernel/cgroup/cgroup.c'
-fi    
+fi
 
 patch_files=(
     "$cgroup"
@@ -15,19 +15,23 @@ patch_files=(
 
 for i in "${patch_files[@]}"; do
 
-    if grep -Fiq "struct rtnl_link_stats64 *stats" "$i"; then
-        echo "Warning: $i contains LXC"
-        continue
+    if [[ "$i" == "$cgroup" ]]; then
+        if grep -Fiq "snprintf(name, CGROUP_FILE_NAME_MAX" "$i"; then
+            echo "Warning: $i contains LXC"
+            continue
+        fi
     fi
-    
-    if grep -Fiq "snprintf(name, CGROUP_FILE_NAME_MAX" "$i"; then
-        echo "Warning: $i contains LXC"
-        continue
-    fi    
+
+    if [[ "$i" == "net/netfilter/xt_qtaguid.c" ]]; then
+        if grep -Fiq "struct rtnl_link_stats64 *stats" "$i"; then
+            echo "Warning: $i contains LXC"
+            continue
+        fi
+    fi
 
     case $i in
 
-    "$cgroup")                                                
+    "$cgroup")
         sed -i '/int cgroup_add_file/,/return 0;/{
         /return 0;/i\
     \tif (cft->ss && (cgrp->root->flags & CGRP_ROOT_NOPREFIX) && !(cft->flags & CFTYPE_NO_PREFIX)) {\
@@ -35,7 +39,7 @@ for i in "${patch_files[@]}"; do
         \tkernfs_create_link(cgrp->kn, name, kn);\
     \t}
 }' "$cgroup"
-        echo "Patch applied successfully to $i" 
+        echo "Patch applied successfully to $i"
         ;;
 
     net/netfilter/xt_qtaguid.c)
@@ -45,7 +49,7 @@ for i in "${patch_files[@]}"; do
     \tstats = &no_dev_stats;
     /if (iface_entry->active)/,+5d
 }' net/netfilter/xt_qtaguid.c
-        echo "Patch applied successfully to $i" 
+        echo "Patch applied successfully to $i"
         ;;
     esac
 
