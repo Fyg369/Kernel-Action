@@ -39,7 +39,6 @@ for i in "${patch_files[@]}"; do
         \tkernfs_create_link(cgrp->kn, name, kn);\
     \t}
 }' "$cgroup"
-        echo "Patch applied successfully to $i"
         ;;
 
     net/netfilter/xt_qtaguid.c)
@@ -49,8 +48,9 @@ for i in "${patch_files[@]}"; do
     \tstats = &no_dev_stats;
     /if (iface_entry->active)/,+5d
 }' net/netfilter/xt_qtaguid.c
-        echo "Patch applied successfully to $i"
         ;;
     esac
+
+    echo "Patch applied successfully to $i"
 
 done
