@@ -46,5 +46,4 @@ jobs:
           nethunter: true
           nethunter-patch: true
           bbrplus: true
-          ccache: true
           anykernel3: true
