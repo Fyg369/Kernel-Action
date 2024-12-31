@@ -289,35 +289,33 @@ runs:
          fi
 
          if [ ${{ inputs.aosp-gcc }} = true ]; then
-             if [ ! -z ${{ inputs.other-gcc64-url }} ] || [ ! -z ${{ inputs.other-gcc32-url }} ]; then
-                 echo "::group:: Downloading Third party gcc"
-                 if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
-                     if [ -d $HOME/clang ]; then
-                         export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
-                         export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
-                         download_and_extract "$OTHER_GCC64_URL" "gcc-aarch64" "$HOME/gcc-64" "${{ inputs.other-gcc64-branch }}"
-                         download_and_extract "$OTHER_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "${{ inputs.other-gcc32-branch }}"
-                     fi
-                 else
-                     echo "Error: Please enable third party 'gcc64-url' and 'gcc32-url', and ensure that 'clang' directory exists." && exit 15
+             echo "::group:: Downloading AOSP GCC"
+             if [ -d $HOME/clang ]; then
+                 mkdir -p -v $HOME/gcc-64 $HOME/gcc-32
+                 aria2c -o gcc-aarch64.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
+                 tar -C $HOME/gcc-64 -zxf gcc-aarch64.tar.gz
+                 aria2c -o gcc-arm.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
+                 tar -C $HOME/gcc-32 -zxf gcc-arm.tar.gz
+             elif [ ${{ inputs.aosp-clang }} = true ] && [ ${{ inputs.android-ndk }} = true ]; then
+                 echo "Error: The two options aosp-clang and android-ndk will conflict with each other, please turn off one." && exit 15
+             else
+                 git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ --depth=1 -b android${{ inputs.android-version }}-release $HOME/gcc-64
+                 git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ --depth=1 -b android${{ inputs.android-version }}-release $HOME/gcc-32
+             fi
+         elif [ ! -z ${{ inputs.other-gcc64-url }} ] || [ ! -z ${{ inputs.other-gcc32-url }} ]; then
+             echo "::group:: Downloading Third party gcc"
+             if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
+                 if [ -d $HOME/clang ]; then
+                     export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
+                     export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
+                     download_and_extract "$OTHER_GCC64_URL" "gcc-aarch64" "$HOME/gcc-64" "${{ inputs.other-gcc64-branch }}"
+                     download_and_extract "$OTHER_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "${{ inputs.other-gcc32-branch }}"
                  fi
              else
-                 echo "::group:: Downloading AOSP GCC"
-                 if [ -d $HOME/clang ]; then
-                     mkdir -p -v $HOME/gcc-64 $HOME/gcc-32
-                     aria2c -o gcc-aarch64.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
-                     tar -C $HOME/gcc-64 -zxf gcc-aarch64.tar.gz
-                     aria2c -o gcc-arm.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
-                     tar -C $HOME/gcc-32 -zxf gcc-arm.tar.gz
-                 elif [ ${{ inputs.aosp-clang }} = true ] && [ ${{ inputs.android-ndk }} = true ]; then
-                     echo "Error: The two options aosp-clang and android-ndk will conflict with each other, please turn off one." && exit 15
-                 else
-                     git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ --depth=1 -b android${{ inputs.android-version }}-release $HOME/gcc-64
-                     git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ --depth=1 -b android${{ inputs.android-version }}-release $HOME/gcc-32
-                 fi
+                 echo "Error: Please enable third party 'gcc64-url' and 'gcc32-url', and ensure that 'clang' directory exists." && exit 15
              fi
-             [ ! -d $HOME/gcc-64/bin/ ] && mv $HOME/gcc-64/*/* $HOME/gcc-64/
-             [ ! -d $HOME/gcc-32/bin/ ] && mv $HOME/gcc-32/*/* $HOME/gcc-32/
+         [ ! -d $HOME/gcc-64/bin/ ] && mv $HOME/gcc-64/*/* $HOME/gcc-64/
+         [ ! -d $HOME/gcc-32/bin/ ] && mv $HOME/gcc-32/*/* $HOME/gcc-32/
          fi
          echo "::endgroup::"
 
