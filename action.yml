@@ -49,7 +49,7 @@ inputs:
   ksu-version:
     description: 'KernelSU default branch'
     required: false
-    default: "main"
+    default: main
   ksu-other:
     required: false
     default: false
