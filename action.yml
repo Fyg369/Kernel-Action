@@ -68,7 +68,7 @@ inputs:
   disable_fst:
     description: 'Disable FST configs for configs.'
     required: false
-    default: false  
+    default: false
   disable_cc_werror:
     description: 'Disable CC_WERROR configs for configs.'
     required: false
