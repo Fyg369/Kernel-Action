@@ -251,7 +251,7 @@ runs:
                  fi
                  tar -C $HOME/clang -zxf aosp-clang.tar.gz
              else
-                 echo "Please enable aosp-gcc."
+                 echo "Please enable gcc."
                  exit 127
              fi
          elif [ ! -z ${{ inputs.other-clang-url }} ]; then
@@ -274,7 +274,7 @@ runs:
                      unzip -d $HOME android-ndk.zip
                  fi
              else
-                 echo "Please disable aosp-gcc and aosp-clang."
+                 echo "Please disable gcc and clang."
                  exit 127
              fi
              echo "::endgroup::"
