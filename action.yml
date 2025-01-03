@@ -478,15 +478,17 @@ runs:
          mkdir out -p -v
          COMMAND="make -j$(nproc --all) ${{ inputs.config }} ARCH=${{ inputs.arch }} all ${{ inputs.extra-cmd }} O=out"
          if [ -d $HOME/clang ]; then
-              COMMAND+=" PATH=$HOME/clang/bin:$PATH"
+             COMMAND+=" PATH=$HOME/clang/bin:$PATH"
+             if [ -d $HOME/gcc-64/bin ] || [ -d $HOME/gcc-32/bin ]; then
+                 COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/${GCC64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
+             fi
+         elif [ -d $HOME/gcc-64/bin ] || [ -d $HOME/gcc-32/bin ]; then
+             COMMAND+=" PATH=$HOME/gcc-64/bin:$HOME/gcc-32/bin:$PATH"
+             COMMAND+=" CROSS_COMPILE=${GCC64}- CROSS_COMPILE_ARM32=${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
          elif [ ${{ inputs.android-ndk }} = true ]; then
               export PATH=$CLANG_PATH/bin:$PATH
               COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
-         fi
-         if [ -d $HOME/gcc-64/bin ] || [ -d $HOME/gcc-32/bin ]; then
-             COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/${GCC64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
-         elif [ ${{ inputs.android-ndk }} = true ]; then
-             COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
+              COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
          if [ -d $HOME/clang ]; then
              if [ ${{ inputs.ccache }} = true ]; then
