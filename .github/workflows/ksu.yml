@@ -36,9 +36,9 @@ jobs:
           other-gcc64-url: https://github.com/pomelohan/linux_aarch64-elf-gcc
           other-gcc64-branch: master          
           ksu: true
-          ksu-version: next
+          ksu-version: main
           ksu-other: true
-          ksu-url: https://github.com/rifsxd/KernelSU
+          ksu-url: https://github.com/5ec1cff/KernelSU
           android-version: 12
           aosp-clang-version: r416183b
           disable-lto: true
