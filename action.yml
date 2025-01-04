@@ -410,7 +410,7 @@ runs:
                    git clone -b ${{ inputs.ksu_susfs-branch }} --depth=1 ${{ inputs.ksu_susfs-url }} sus
                    aria2c https://github.com/Fyj69/Zy-Action/raw/main/tests/susfs.sh && bash susfs.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }}
                    cd sus
-                   aria2c https://github.com/Fyj69/patch/blob/main/kernelsu/susfs.patch
+                   aria2c https://github.com/Fyj69/patch/blob/main/kernelsu/10_enable_susfs_for_ksu.patch
                    cp ./10_enable_susfs_for_ksu.patch ../KernelSU-Next/
                    cp ./kernel_patches/50_add_susfs_in_${{ inputs.ksu_susfs-version }}.patch ../
                    cp ./kernel_patches/fs/* ../fs/
