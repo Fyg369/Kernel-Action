@@ -29,8 +29,8 @@ jobs:
           config: mcd_ksu_defconfig
           arch: arm64
           extra-cmd: LLVM=1
-          other-clang-url: https://gitlab.com/LeCmnGend/clang
-          other-clang-branch: clang-19
+          other-clang-url: https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20250106-release/Clang-20.0.0git-20250106.tar.gz
+          #other-clang-branch: clang-19
           other-gcc32-url: https://github.com/pomelohan/linux_arm-eabi-gcc
           other-gcc32-branch: master
           other-gcc64-url: https://github.com/pomelohan/linux_aarch64-elf-gcc
