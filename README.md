@@ -77,9 +77,9 @@ Or use the [preset workflow file](https://github.com/dabao1955/kernel_build_acti
 | ksu-other | false | | false |
 | ksu-url | false | Ude 3rd KernelSU | https://github.com/xxx/KernelSU/ |
 | bbrplus | false | | false |
-| disable-lto | false | | false |
+| disable-lto | false | LTO is used to optimize the kernel but can sometimes cause errors. | false |
 | disable_fst | false | Disable fstack-protector-strong (clang-r383902b) | false |
-| disable_cc_werror | false | | false |
+| disable_cc_werror | false | This is used to fix kernels that do not support or have Kprobes disabled, addressing the issue where KernelSU fails to detect the variable indicating Kprobes is enabled and throws a warning. | false |
 | kprobes | false | Enable kprobes to config | false |
 | lxc | false | Enable LXC and docker to config | false | 
  | lxc-patch | false | Add patch avoid not booting after enable lxc | false | 
