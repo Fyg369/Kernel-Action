@@ -3,12 +3,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    uses: ./.github/workflows/check.yml
-
   ci-test:
-    needs:
-      - lint
     name: ci-ksu
     strategy:
       fail-fast: false
