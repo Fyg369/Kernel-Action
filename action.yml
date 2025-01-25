@@ -25,7 +25,7 @@ inputs:
     required: false
     default: vendor
   kernel-branch:
-    description: 'Branch name'
+    description: 'Branch name for kernel source'
     required: false
     default: main
   vendor-branch:
@@ -40,7 +40,7 @@ inputs:
     default: arm64
   android-version:
     description: 'Android version.'
-    required: true
+    required: false
     default: ""
   ksu:
     description: 'KernelSU function support'
@@ -406,6 +406,11 @@ runs:
                 aria2c https://github.com/Fyg369/Kernel-Action/raw/main/mkdtboimg.py -o ufdt/libufdt/utils/src/mkdtboimg.py
             fi
             test -f /usr/bin/python2 || "$SU" ln -s -f -v /usr/bin/python3 /usr/bin/python2
+         else
+             echo "::group:: Downloading mkdtboimg to /usr/local/bin"
+             sudo aria2c https://github.com/Fyg369/Kernel-Action/raw/main/mkdtboimg.py -o mkdtboimg
+             sudo chmod +x -v mkdtboimg
+             sudo mv mkdtboimg -v /usr/local/bin/mkdtboimg
          fi
          echo "::endgroup::"
 
