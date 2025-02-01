@@ -482,9 +482,10 @@ runs:
          echo "::group:: Building Kernel with selected cross compiler"
          mkdir out -p -v
          COMMAND="make -j$(nproc --all) ${{ inputs.config }} ARCH=${{ inputs.arch }} all ${{ inputs.extra-cmd }} O=out"
-         
+
          if [ -d $HOME/clang ]; then
              COMMAND+=" PATH=$HOME/clang/bin:$PATH"
+             COMMAND+=" CC=clang"
              if [ -d $HOME/gcc-64/bin ] || [ -d $HOME/gcc-32/bin ]; then
                  COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/${GCC64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
              fi
@@ -501,11 +502,8 @@ runs:
               export PATH="/usr/lib/ccache:$PATH"
 
               if [ -d "${HOME}/clang" ]; then
-                  if [ ! -e /usr/lib/clang ]; then
+                  [ ! -e /usr/lib/clang ] && \
                       ln -s /usr/lib/clang /usr/bin/ccache
-                  else
-                      COMMAND+=" CC=clang"
-                  fi
               else
                   if [ -n "${GCC64}" ]; then
                       [ ! -e "/usr/lib/${GCC64}-gcc" ] && \
