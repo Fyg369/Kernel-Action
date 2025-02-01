@@ -520,6 +520,7 @@ runs:
                   fi
               fi
          fi
+
          echo "using command: ${COMMAND}"
          eval ${COMMAND}
          echo "::endgroup::"
