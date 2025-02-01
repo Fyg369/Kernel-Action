@@ -502,6 +502,7 @@ runs:
              COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
              COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
+
          if [ ${{ inputs.ccache }} = true ]; then
               export USE_CCACHE=1
               export PATH="/usr/lib/ccache:$PATH"
