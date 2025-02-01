@@ -485,8 +485,7 @@ runs:
          COMMAND="make -j$(nproc --all) ${{ inputs.config }} ARCH=${{ inputs.arch }} all ${{ inputs.extra-cmd }} O=out"
 
          if [ -d $HOME/clang ]; then
-             COMMAND+=" PATH=$HOME/clang/bin:$PATH"
-             COMMAND+=" CC=clang"
+             COMMAND+=" PATH=$HOME/clang/bin:$PATH CC=clang"
              if [ -d $HOME/gcc-64/bin ] || [ -d $HOME/gcc-32/bin ]; then
                  COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/${GCC64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
              fi
@@ -506,7 +505,7 @@ runs:
 
          if [ ${{ inputs.ccache }} = true ]; then
               export USE_CCACHE=1
-              export PATH="/usr/lib/ccache:$PATH"
+              COMMAND="PATH=/usr/lib/ccache:$PATH $COMMAND"
 
               if [ -d "${HOME}/clang" ]; then
                   [ ! -e /usr/lib/clang ] && \
