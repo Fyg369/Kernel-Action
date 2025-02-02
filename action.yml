@@ -579,10 +579,10 @@ runs:
 
             rm -rf -v AnyKernel3/.git* AnyKernel3/README.md
             if [ ${{ inputs.release }} = false ]; then
-                mkdir -p -v ../../build && cp AnyKernel3 ../../build -r -v
+                cp AnyKernel3 ../../build -r -v
             else
                 zip Anykernel3-flasher.zip AnyKernel3/*
-                mkdir -p -v ../../build && mv -v Anykernel3-flasher.zip ../../build/
+                mv -v Anykernel3-flasher.zip ../../build/
             fi
             echo "::endgroup::"
          fi
