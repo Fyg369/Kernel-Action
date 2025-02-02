@@ -498,7 +498,7 @@ runs:
               fi
               CMD="CROSS_COMPILE=${GCC64}- CROSS_COMPILE_ARM32=${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
          elif [ ${{ inputs.android-ndk }} = true ]; then
-             CMD_PATH="$CLANG_PATH/bin"
+             export PATH=$CLANG_PATH/bin:$PATH
              CMD="CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
              CMD="CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
@@ -521,7 +521,7 @@ runs:
               fi
          fi
 
-         COMMAND+=" PATH=${CMD_PATH}:${PATH} ${CMD} CC=${CMD_CC}"
+         [ ${{ inputs.android-ndk }} = false ] && COMMAND+=" PATH=${CMD_PATH}:${PATH} ${CMD} CC=${CMD_CC}"
          echo "using command: ${COMMAND}"
          eval ${COMMAND}
          echo "::endgroup::"
