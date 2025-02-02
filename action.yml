@@ -485,27 +485,27 @@ runs:
          COMMAND="make -j$(nproc --all) ${{ inputs.config }} ARCH=${{ inputs.arch }} all ${{ inputs.extra-cmd }} O=out"
 
          if [ -d $HOME/clang ]; then
-             COMMAND+=" PATH=$HOME/clang/bin:$PATH CC=clang"
+             CMD_PATH="$HOME/clang/bin"; CMD_CC="clang"
              if [ -d $HOME/gcc-64/bin ] || [ -d $HOME/gcc-32/bin ]; then
                  COMMAND+=" CROSS_COMPILE=$HOME/gcc-64/bin/${GCC64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
              fi
          elif [ -d "$HOME/gcc-64/bin" ] || [ -d "$HOME/gcc-32/bin" ]; then
-              COMMAND+=" PATH=$HOME/gcc-64/bin:$HOME/gcc-32/bin:$PATH"
+              CMD_PATH="$HOME/gcc-64/bin:$HOME/gcc-32/bin"
               if [ -n "${GCC64}" ]; then
-                  COMMAND+=" CC=$HOME/gcc-64/bin/${GCC64}-gcc"
+                  CMD_CC="$HOME/gcc-64/bin/${GCC64}-gcc"
               else
-                  COMMAND+=" CC=$HOME/gcc-32/bin/${GCC32}-gcc"
+                  CMD_CC="$HOME/gcc-32/bin/${GCC32}-gcc"
               fi
               COMMAND+=" CROSS_COMPILE=${GCC64}- CROSS_COMPILE_ARM32=${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
          elif [ ${{ inputs.android-ndk }} = true ]; then
-             export PATH=$CLANG_PATH/bin:$PATH
+             CMD_PATH="$CLANG_PATH/bin"
              COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
              COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
 
          if [ ${{ inputs.ccache }} = true ]; then
               export USE_CCACHE=1
-              COMMAND="PATH=/usr/lib/ccache:$PATH $COMMAND"
+              CMD_PATH="/usr/lib/ccache:${CMD_PATH}"
 
               if [ -d "${HOME}/clang" ]; then
                   [ ! -e /usr/lib/clang ] && \
@@ -521,11 +521,12 @@ runs:
               fi
          fi
 
+         COMMAND+=" PATH=${CMD_PATH}:${PATH} ${COMMAND} CC=${CMD_CC}"
          echo "using command: ${COMMAND}"
          eval ${COMMAND}
          echo "::endgroup::"
 
-         unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION GCC_DIR FILE FILE_NAME MATCHED_DIR FOLDER FOLDER_NAME GCC64 GCC32
+         unset CMD_PATH CMD_CC USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION GCC_DIR FILE FILE_NAME MATCHED_DIR FOLDER FOLDER_NAME GCC64 GCC32
 
          if [ ${{ inputs.anykernel3 }} = false ]; then
             echo "::group:: Preparing to Upload boot.img"
