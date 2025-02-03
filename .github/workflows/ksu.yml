@@ -34,8 +34,9 @@ jobs:
           ksu-version: next
           ksu-other: true
           ksu-url: https://github.com/rifsxd/KernelSU-Next
-          android-version: 12
-          aosp-clang-version: r416183b
+          ksu_susfs-url: https://gitlab.com/simonpunk/susfs4ksu
+          ksu_susfs-branch: kernel-4.9
+          ksu_susfs-version: kernel-4.9
           disable-lto: true
           disable_cc_werror: true
           lxc: true
