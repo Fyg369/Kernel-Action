@@ -381,7 +381,7 @@ runs:
             if [ ! -z ${{ inputs.ksu_susfs-url }} ]; then
                    echo "::group:: Initializing KernelSU SuSFS"
                    git clone -b ${{ inputs.ksu_susfs-branch }} --depth=1 ${{ inputs.ksu_susfs-url }} sus
-                   aria2c https://github.com/Fyj69/Zy-Action/raw/main/tests/susfs.sh && bash susfs.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }}
+                   aria2c https://github.com/Fyj69/patch/raw/main/kernelsu/susfs.sh && bash susfs.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }}
                    sed -i 's/static void fanotify_fdinfo(struct seq_file \*m, struct fsnotify_mark \*mark)/static void fanotify_fdinfo(struct seq_file \*m, struct fsnotify_mark \*mark, struct file \*file)/g' fs/notify/fdinfo.c
                    cd sus
                    aria2c https://raw.githubusercontent.com/Fyj69/patch/main/kernelsu/susfs.patch
