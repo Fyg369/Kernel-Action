@@ -57,6 +57,16 @@ inputs:
     description: "Use 3rd KernelSU"
     required: false
     default: ""
+  ksu_susfs-url:
+    required: false
+    default: ''
+  ksu_susfs-branch:
+    required: false
+    default: main
+  ksu_susfs-version:
+    description: 'ksu_susfs default branch'
+    required: false
+    default: main    
   ksu-lkm:
     description: "Build KernelSU as a loadable kernel module"
     required: false
@@ -263,32 +273,6 @@ runs:
          fi
          echo "::endgroup::"
 
-         if [ ${{ inputs.android-ndk }} = true ]; then
-             echo "::group:: Downloading Android NDK"
-             if [ ${{ inputs.aosp-gcc }} = false ]; then
-                 export NDKVER=$(echo "${{ inputs.android-ndk-version }}" | sed 's/r\([0-9]\+\)[a-zA-Z]\?/\1/g')
-                 if [ "$NDKVER" -lt "23" ]; then
-                     aria2c -o android-ndk.zip https://dl.google.com/android/repository/android-ndk-${{ inputs.android-ndk-version }}-linux-x86_64.zip
-                     unzip -d $HOME android-ndk.zip
-                 else
-                     aria2c -o android-ndk.zip https://dl.google.com/android/repository/android-ndk-${{ inputs.android-ndk-version }}-linux.zip
-                     unzip -d $HOME android-ndk.zip
-                 fi
-             else
-                 echo "Please disable gcc and clang."
-                 exit 127
-             fi
-             echo "::endgroup::"
-
-             export HOMES=$(pwd)
-             export LLVMS=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64/bin
-             cd $LLVMS
-             for file in $(ls llvm-*); do
-                 ln -s -v "$file" "aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))-${file#llvm-}"
-             done
-             cd $HOMES
-         fi
-
          if [ ${{ inputs.aosp-gcc }} = true ]; then
              echo "::group:: Downloading AOSP GCC"
              if [ -d $HOME/clang ]; then
@@ -297,8 +281,6 @@ runs:
                  tar -C $HOME/gcc-64 -zxf gcc-aarch64.tar.gz
                  aria2c -o gcc-arm.tar.gz https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz
                  tar -C $HOME/gcc-32 -zxf gcc-arm.tar.gz
-             elif [ ${{ inputs.aosp-clang }} = true ] && [ ${{ inputs.android-ndk }} = true ]; then
-                 echo "Error: The two options aosp-clang and android-ndk will conflict with each other, please turn off one." && exit 15
              else
                  git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ --depth=1 -b android${{ inputs.android-version }}-release $HOME/gcc-64
                  git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ --depth=1 -b android${{ inputs.android-version }}-release $HOME/gcc-32
@@ -395,6 +377,20 @@ runs:
                     aria2c -q https://github.com/Fyg369/Kernel-Action/raw/main/tests/patch.sh
                     grep -qs "may_mandlock(void)" fs/namespace.c || sed -i '110s|}}||' patch.sh; bash patch.sh
                 fi
+            fi
+            if [ ! -z ${{ inputs.ksu_susfs-url }} ]; then
+                   echo "::group:: Initializing KernelSU SuSFS"
+                   git clone -b ${{ inputs.ksu_susfs-branch }} --depth=1 ${{ inputs.ksu_susfs-url }} sus
+                   aria2c https://github.com/Fyj69/Zy-Action/raw/main/tests/susfs.sh && bash susfs.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }}
+                   sed -i 's/static void fanotify_fdinfo(struct seq_file \*m, struct fsnotify_mark \*mark)/static void fanotify_fdinfo(struct seq_file \*m, struct fsnotify_mark \*mark, struct file \*file)/g' fs/notify/fdinfo.c
+                   cd sus
+                   aria2c https://raw.githubusercontent.com/Fyj69/patch/main/kernelsu/susfs.patch
+                   cp ./susfs.patch ../KernelSU-Next/
+                   cp ./kernel_patches/50_add_susfs_in_${{ inputs.ksu_susfs-version }}.patch ../
+                   cp ./kernel_patches/fs/* ../fs/
+                   cp ./kernel_patches/include/linux/* ../include/linux/
+                   cd ../KernelSU-Next && patch -p1 -F 3 < susfs.patch
+                   cd ../ && patch -p1 -F 3 < 50_add_susfs_in_${{ inputs.ksu_susfs-version }}.patch
             fi
             echo "::endgroup::"
          fi
@@ -497,10 +493,6 @@ runs:
                   CMD_CC="$HOME/gcc-32/bin/${GCC32}-gcc"
               fi
               CMD="CROSS_COMPILE=${GCC64}- CROSS_COMPILE_ARM32=${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
-         elif [ ${{ inputs.android-ndk }} = true ]; then
-             export PATH=$CLANG_PATH/bin:$PATH
-             COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
-             COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
 
          if [ ${{ inputs.ccache }} = true ]; then
@@ -521,7 +513,7 @@ runs:
               fi
          fi
 
-         [ ${{ inputs.android-ndk }} = false ] && COMMAND+=" PATH=${CMD_PATH}:${PATH} ${CMD} CC=${CMD_CC}"
+         COMMAND+=" PATH=${CMD_PATH}:${PATH} ${CMD} CC=${CMD_CC}"
          echo "using command: ${COMMAND}"
          eval ${COMMAND}
          echo "::endgroup::"
