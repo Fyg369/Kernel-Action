@@ -144,14 +144,6 @@ inputs:
   other-clang-branch:
     required: false
     default: main
-  android-ndk:
-    description: 'Use Android NDK to build kernrl (Experimental features)'
-    required: false
-    default: false
-  android-ndk-version:
-    description: 'Please press nember instead of r(e.g. : 26).'
-    required: false
-    default: r21b
   anykernel3:
     description: 'Package kernel use anykernel3.'
     required: false
