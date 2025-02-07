@@ -376,12 +376,12 @@ runs:
                    aria2c https://github.com/Fyj69/patch/raw/main/kernelsu/susfs.sh && bash susfs.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }}
                    sed -i 's/static void fanotify_fdinfo(struct seq_file \*m, struct fsnotify_mark \*mark)/static void fanotify_fdinfo(struct seq_file \*m, struct fsnotify_mark \*mark, struct file \*file)/g' fs/notify/fdinfo.c
                    cd sus
-                   #aria2c https://raw.githubusercontent.com/Fyj69/patch/main/kernelsu/susfs.patch
-                   #cp ./susfs.patch ../KernelSU-Next/
+                   aria2c https://raw.githubusercontent.com/Fyj69/patch/main/kernelsu/susfs.patch
+                   cp ./susfs.patch ../KernelSU-Next/
                    cp ./kernel_patches/50_add_susfs_in_${{ inputs.ksu_susfs-version }}.patch ../
                    cp ./kernel_patches/fs/* ../fs/
                    cp ./kernel_patches/include/linux/* ../include/linux/
-                   #cd ../KernelSU-Next && patch -p1 -F 3 < susfs.patch
+                   cd ../KernelSU-Next && patch -p1 -F 3 < susfs.patch
                    cd ../ && patch -p1 -F 3 < 50_add_susfs_in_${{ inputs.ksu_susfs-version }}.patch
             fi
             echo "::endgroup::"
