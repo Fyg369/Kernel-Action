@@ -381,7 +381,7 @@ runs:
                    sed -i 's/static void fanotify_fdinfo(struct seq_file \*m, struct fsnotify_mark \*mark)/static void fanotify_fdinfo(struct seq_file \*m, struct fsnotify_mark \*mark, struct file \*file)/g' fs/notify/fdinfo.c
                    cd sus
                    #aria2c https://raw.githubusercontent.com/Fyj69/patch/main/kernelsu/susfs.patch
-                   cp ./kernel_patches/10_enable_susfs_for_ksu.patch ../KernelSU/
+                   cp ./kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ../KernelSU/
                    cp ./kernel_patches/50_add_susfs_in_${{ inputs.ksu_susfs-version }}.patch ../
                    cp ./kernel_patches/fs/* ../fs/
                    cp ./kernel_patches/include/linux/* ../include/linux/
