@@ -31,9 +31,9 @@ jobs:
           other-gcc64-url: https://github.com/pomelohan/linux_aarch64-elf-gcc
           other-gcc64-branch: master
           ksu: true
-          ksu-version: next
+          ksu-version: main
           ksu-other: true
-          ksu-url: https://github.com/rifsxd/KernelSU-Next
+          ksu-url: https://github.com/5ec1cff/KernelSU
           ksu_susfs-url: https://gitlab.com/simonpunk/susfs4ksu
           ksu_susfs-branch: kernel-4.9
           ksu_susfs-version: kernel-4.9
