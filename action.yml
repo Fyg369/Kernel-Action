@@ -308,7 +308,7 @@ runs:
          elif [ ! -z ${{ inputs.other-gcc64-url }} ] || [ ! -z ${{ inputs.other-gcc32-url }} ]; then
              echo "::group:: Downloading Third party GCC"
              if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
-                 if [ -d $HOME/clang ]; then
+                 if [ -d "$HOME/clang/bin" ]; then
                      export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
                      export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
                      download_and_extract "$OTHER_GCC64_URL" "gcc-aarch64" "$HOME/gcc-64" "${{ inputs.other-gcc64-branch }}"
