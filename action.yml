@@ -247,7 +247,6 @@ runs:
          if [ ${{ inputs.aosp-clang }} = true ]; then
              echo "::group:: Downloading AOSP clang"
              if [ ${{ inputs.aosp-gcc }} = true ]; then
-                 mkdir $HOME/clang -p -v
                  if [ ! -z ${{ inputs.android-version }} ]; then
                      export AOSP_CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android${{ inputs.android-version }}-release/clang-${{ inputs.aosp-clang-version }}.tar.gz"
                  else
