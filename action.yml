@@ -128,14 +128,6 @@ inputs:
   other-clang-branch:
     required: false
     default: main
-  android-ndk:
-    description: 'Use Android NDK to build kernrl (Experimental features)'
-    required: false
-    default: false
-  android-ndk-version:
-    description: 'Please press nember instead of r(e.g. : 26).'
-    required: false
-    default: r21b
   anykernel3:
     description: 'Package kernel use anykernel3.'
     required: false
@@ -256,39 +248,12 @@ runs:
          fi
          echo "::endgroup::"
 
-         if [ ${{ inputs.android-ndk }} = true ]; then
-             echo "::group:: Downloading Android NDK"
-             if [ ${{ inputs.aosp-gcc }} = false ]; then
-                 export NDKVER=$(echo "${{ inputs.android-ndk-version }}" | sed 's/r\([0-9]\+\)[a-zA-Z]\?/\1/g')
-                 if [ "$NDKVER" -lt "23" ]; then
-                     export NDK_URL="https://dl.google.com/android/repository/android-ndk-${{ inputs.android-ndk-version }}-linux-x86_64.zip"
-                 else
-                     export NDK_URL="https://dl.google.com/android/repository/android-ndk-${{ inputs.android-ndk-version }}-linux.zip"
-                 fi
-                 download_and_extract "$NDK_URL" "android-ndk" "$HOME"
-             else
-                 echo "Please disable gcc and clang."
-                 exit 127
-             fi
-             echo "::endgroup::"
-
-             export HOMES=$(pwd)
-             export LLVMS=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64/bin
-             cd $LLVMS
-             for file in $(ls llvm-*); do
-                 ln -s -v "$file" "aarch64-linux-android$(( ${{ inputs.android-version }} + 19 ))-${file#llvm-}"
-             done
-             cd $HOMES
-         fi
-
          if [ ${{ inputs.aosp-gcc }} = true ]; then
              echo "::group:: Downloading AOSP GCC"
              if [ ! -z ${{ inputs.android-version }} ]; then
                  export AOSP_GCC64_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
                  export AOSP_GCC32_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
                  export AOSP_GCC_BRANCH="android${{ inputs.android-version }}-release"
-             elif [ ${{ inputs.aosp-clang }} = true ] && [ ${{ inputs.android-ndk }} = true ]; then
-                 echo "Error: The two options aosp-clang and android-ndk will conflict with each other, please turn off one." && exit 15
              else
                  export AOSP_GCC64_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz"
                  export AOSP_GCC32_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz"
@@ -297,19 +262,13 @@ runs:
              download_and_extract "$AOSP_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "$AOSP_GCC_BRANCH"
          elif [ ! -z ${{ inputs.other-gcc64-url }} ] || [ ! -z ${{ inputs.other-gcc32-url }} ]; then
              echo "::group:: Downloading Third party GCC"
-             if [ ! -z ${{ inputs.other-gcc64-url }} ] && [ ! -z ${{ inputs.other-gcc32-url }} ]; then
-                 if [ -d "$HOME/clang/bin" ]; then
                      export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
                      export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
                      download_and_extract "$OTHER_GCC64_URL" "gcc-aarch64" "$HOME/gcc-64" "${{ inputs.other-gcc64-branch }}"
                      download_and_extract "$OTHER_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "${{ inputs.other-gcc32-branch }}"
-                 fi
-             else
-                 echo "Error: Please enable third party 'gcc64-url' and 'gcc32-url', and ensure that 'clang' directory exists." && exit 15
-             fi
+         fi
          [ ! -d $HOME/gcc-64/bin/ ] && mv $HOME/gcc-64/*/* $HOME/gcc-64/
          [ ! -d $HOME/gcc-32/bin/ ] && mv $HOME/gcc-32/*/* $HOME/gcc-32/
-         fi
          echo "::endgroup::"
 
          echo "::group:: Pulling Kernel Source"
@@ -341,10 +300,6 @@ runs:
              done
          done
 
-         [ ! -d "$HOME/gcc-64/aarch64-linux-android" ] && rm -vf "$HOME/gcc-64/bin/${GCC64}-ld"
-         [ ! -d "$HOME/gcc-32/arm-linux-androideabi" ] && rm -vf "$HOME/gcc-32/bin/${GCC32}-ld"
-         ! grep -qsi "LD *= *ld.lld" Makefile && [ -f "$HOME/clang/bin/ld" ] && rm -vf "$HOME/clang/bin/ld"
-
          function version_gt() { test "$(echo -e "$1\n$2" | sort -V | tail -n1)" == "$1"; }
          VERSION=$(grep -E '^VERSION = ' Makefile | awk '{print $3}')
          PATCHLEVEL=$(grep -E '^PATCHLEVEL = ' Makefile | awk '{print $3}')
@@ -357,21 +312,18 @@ runs:
 
          if [ ${{ inputs.ksu }} = true ]; then
             echo "::group:: Initializing KernelSU"
-            if grep -qsi "path = .*KernelSU" .gitmodules || [ -f KernelSU/kernel/Kconfig ]; then
-                echo "KernelSU has been initialized,skipped."
+            [ -d "KernelSU" ] && rm -rf "KernelSU"
+            if [ ${{ inputs.ksu-other }} = true ]; then
+                curl -SsL "${{ inputs.ksu-url }}/raw/${{ inputs.ksu-version }}/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
             else
-                if [ ${{ inputs.ksu-other }} = true ]; then
-                    curl -SsL "${{ inputs.ksu-url }}/raw/${{ inputs.ksu-version }}/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
+                echo "Kernel version: $VERSION.$PATCHLEVEL.$SUBLEVEL"
+                if [ -f nongki.txt ]; then
+                    printf "Warning: The KernelSU version you selected was detected to be ${{ inputs.ksu-version }}, but KernelSU has dropped support for the non-gki kernel since 0.9.5. \n This will force switch to v0.9.5.\n"
+                    export KVER=v0.9.5
                 else
-                    echo "Kernel version: $VERSION.$PATCHLEVEL.$SUBLEVEL"
-                    if [ -f nongki.txt ]; then
-                        printf "Warning: The KernelSU version you selected was detected to be ${{ inputs.ksu-version }}, but KernelSU has dropped support for the non-gki kernel since 0.9.5. \n This will force switch to v0.9.5.\n"
-                        export KVER=v0.9.5
-                    else
-                        export KVER=${{ inputs.ksu-version }}
-                    fi
-                    curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s "$KVER"
+                    export KVER=${{ inputs.ksu-version }}
                 fi
+                    curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s "$KVER"
             fi
             if [ ${{ inputs.ksu-lkm }} = true ]; then
                 if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
@@ -489,10 +441,6 @@ runs:
                   CMD_CC="$HOME/gcc-32/bin/${GCC32}-gcc"
               fi
               CMD="CROSS_COMPILE=${GCC64}- CROSS_COMPILE_ARM32=${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
-         elif [ ${{ inputs.android-ndk }} = true ]; then
-             export PATH=$CLANG_PATH/bin:$PATH
-             COMMAND+=" CLANG_PATH=$HOME/android-ndk-${{ inputs.android-ndk-version }}/toolchains/llvm/prebuilt/linux-x86_64"
-             COMMAND+=" CROSS_COMPILE=$CLANG_PATH/bin/llvm- CROSS_COMPILE_ARM32=$CLANG_PATH/bin/llvm-"
          fi
 
          if [ ${{ inputs.ccache }} = true ]; then
