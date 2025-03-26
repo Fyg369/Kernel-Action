@@ -466,7 +466,6 @@ runs:
               fi
          fi
 
-         [ ${{ inputs.android-ndk }} = false ] && COMMAND+=" PATH=${CMD_PATH}:${PATH} ${CMD} CC=${CMD_CC}"
          echo "using command: ${COMMAND}"
          eval ${COMMAND}
          echo "::endgroup::"
