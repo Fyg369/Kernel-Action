@@ -466,6 +466,7 @@ runs:
               fi
          fi
 
+         COMMAND+=" PATH=${CMD_PATH}:${PATH} ${CMD} CC=${CMD_CC}"
          echo "using command: ${COMMAND}"
          eval ${COMMAND}
          echo "::endgroup::"
