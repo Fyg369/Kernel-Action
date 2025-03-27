@@ -330,7 +330,7 @@ runs:
                 else
                     export KVER=${{ inputs.ksu-version }}
                 fi
-                    curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s "$KVER"
+                curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s "$KVER"
             fi
             if [ ${{ inputs.ksu-lkm }} = true ]; then
                 if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
@@ -393,14 +393,14 @@ runs:
          fi
 
          if [ ${{ inputs.disable_cc_werror }} = true ]; then
-            grep -q "CONFIG_CC_WERROR=n" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_CC_WERROR=n" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             grep -q "CONFIG_CC_WERROR=n" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_CC_WERROR=n" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
          fi
 
          if [ ${{ inputs.kprobes }} = true ]; then
-            grep -q "CONFIG_MODULES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_MODULES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_KPROBES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            grep -q "CONFIG_HAVE_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_HAVE_KPROBES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            grep -q "CONFIG_KPROBE_EVENTS=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_KPROBE_EVENTS=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             grep -q "CONFIG_MODULES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_MODULES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_KPROBES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             grep -q "CONFIG_HAVE_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_HAVE_KPROBES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             grep -q "CONFIG_KPROBE_EVENTS=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || echo "CONFIG_KPROBE_EVENTS=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
          fi
 
          if [ ${{ inputs.disable-lto }} = true ]; then
@@ -414,10 +414,10 @@ runs:
          fi
 
          if [ ${{ inputs.kvm }} = true ]; then
-            echo "CONFIG_VIRTUALIZATION=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            echo "CONFIG_KVM=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            echo "CONFIG_KVM_MMIO=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            echo "CONFIG_KVM_ARM_HOST=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             echo "CONFIG_VIRTUALIZATION=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             echo "CONFIG_KVM=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             echo "CONFIG_KVM_MMIO=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+             echo "CONFIG_KVM_ARM_HOST=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
          fi
 
          if [ ${{ inputs.lxc }} = true ]; then
