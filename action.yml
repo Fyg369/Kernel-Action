@@ -378,7 +378,7 @@ runs:
 
          if [ ${{ inputs.bbrplus }} = true ]; then
              echo "::group:: Initializing BBRPlus"
-             aria2c https://raw.githubusercontent.com/UJX6N/bbrplus-4.9/main/convert_official_linux-4.9.x_src_to_bbrplus.patch && git apply --whitespace=nowarn convert_official_linux-4.9.x_src_to_bbrplus.patch
+             aria2c https://raw.githubusercontent.com/UJX6N/bbrplus-4.9/main/convert_official_linux-4.9.x_src_to_bbrplus.patch && patch -p1 -F 3 < convert_official_linux-4.9.x_src_to_bbrplus.patch
              echo "::endgroup::"
          fi
 
