@@ -442,6 +442,8 @@ runs:
                   CMD_CC="$HOME/gcc-32/bin/${GCC32}-gcc"
               fi
               CMD="CROSS_COMPILE=${GCC64}- CROSS_COMPILE_ARM32=${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
+         else
+              CMD="CMD_CC=/usr/bin/clang CROSS_COMPILE=/usr/bin/aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnuabeihf- CLANG_TRIPLE=aarch64-linux-gnu-"
          fi
 
          if [ ${{ inputs.ccache }} = true ]; then
