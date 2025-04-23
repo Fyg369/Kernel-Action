@@ -539,7 +539,7 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: kernel-built-bootimg
-        path: build/boot.img
+        path: build/*
         if-no-files-found: error
         overwrite: true
 
