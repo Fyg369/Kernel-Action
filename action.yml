@@ -487,7 +487,7 @@ runs:
             rm -rf -v kernel
             export FMT=$(cat nohup.out | grep "KERNEL_FMT" | awk '{gsub("\\[", "", $2); gsub("\\]", "", $2); print $2}')
             if [ "$FMT" = "raw" ] ; then
-                find ../out/arch/${{ inputs.arch }}/boot -name "Image" ! -name "*-*" -exec cp -v {} kernel \;
+                find ../out/arch/${{ inputs.arch }}/boot -name "Image" -exec cp -v {} kernel \;
             else
                 if ls dtb >/dev/null ; then
                     find ../out/arch/${{ inputs.arch }}/boot -name "Image.*-dtb" -exec cp -v {} kernel \;
