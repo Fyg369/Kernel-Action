@@ -484,14 +484,15 @@ runs:
             esac
             aria2c ${{ inputs.bootimg-url }} -o boot.img
             ./magiskboot unpack boot.img > nohup.out 2>&1 # nohup is not working in github ci!
+            rm -rf -v kernel
             export FMT=$(cat nohup.out | grep "KERNEL_FMT" | awk '{gsub("\\[", "", $2); gsub("\\]", "", $2); print $2}')
             if [ "$FMT" = "raw" ] ; then
-                cp -v ../out/arch/${{ inputs.arch }}/boot/Image kernel
+                find ../out/arch/${{ inputs.arch }}/boot -name "Image" ! -name "*-*" -exec cp -v {} kernel \;
             else
                 if ls dtb >/dev/null ; then
-                    cp -v ../out/arch/${{ inputs.arch }}/boot/Image.*-dtb kernel
+                    find ../out/arch/${{ inputs.arch }}/boot -name "Image.*-dtb" -exec cp -v {} kernel \;
                 else
-                    cp -v ../out/arch/${{ inputs.arch }}/boot/Image.* kernel
+                    find ../out/arch/${{ inputs.arch }}/boot -name "Image.*" ! -name "*-*" -exec cp -v {} kernel \;
                 fi
             fi
             ./magiskboot repack boot.img
