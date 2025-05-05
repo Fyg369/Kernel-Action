@@ -31,10 +31,6 @@ jobs:
           ksu-version: next
           ksu-other: true
           ksu-url: https://github.com/rifsxd/KernelSU-Next
-          android-version: 12
-          aosp-clang-version: r416183b
-          disable-lto: true
-          disable_cc_werror: true
           lxc: true
           lxc-patch: true
           nethunter: true
