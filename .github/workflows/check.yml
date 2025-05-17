@@ -7,38 +7,36 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        lint: [python, js]
     steps:
 
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+      - name: Setup (Python)
+        if: matrix.lint == 'python'
+        run: |
+          sudo apt install yamllint
 
-      - name: Check yaml
-        run: cd tests && bun run index.ts
+      - name: Setup (JS)
+        if: matrix.lint == 'js'
+        run: |
+          sudo npm install -g yaml-lint
 
-      - name: Clean Workspace
-        run: bun run tests/clean.ts
+      - name: Check yaml(Python)
+        if: matrix.lint == 'python'
+        run: |
+          A=$(find . | grep .yml)
+          /usr/bin/yamllint action.yml
 
-  js-check:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-         node-version: 20
-
-      - name: Install dependence
-        run: cd tests && yarn install
+      - name: Check yaml(JS)
+        if: matrix.lint == 'js'
+        run: |
+          A=$(find . | grep .yml)
+          /usr/local/bin/yamllint $A
 
   sh-check:
     runs-on: ubuntu-latest

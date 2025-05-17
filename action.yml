@@ -339,7 +339,7 @@ runs:
                 if grep -q "CONFIG_KPROBES=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" ; then
                     echo "CONFIG_KPROBES is enabled, skip patch."
                 else
-                    aria2c -q https://github.com/Fyg369/Kernel-Action/raw/main/tests/patch.sh
+                    aria2c -q https://github.com/Fyg369/Kernel-Action/raw/main/patch/patch.sh
                     grep -qs "may_mandlock(void)" fs/namespace.c || sed -i '/fs\/namespace.c$/s/}}"/}"/' patch.sh; bash patch.sh
                 fi
             fi
@@ -420,7 +420,7 @@ runs:
              echo "::group:: Enabling LXC"
              aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/config.sh && bash config.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
              if [ ${{ inputs.lxc-patch }} = true ]; then
-                 curl -SsL https://github.com/Fyg369/Kernel-Action/raw/main/tests/lxc.sh | bash
+                 curl -SsL https://github.com/Fyg369/Kernel-Action/raw/main/patch/lxc.sh | bash
              else
                  echo "Skip LXC patching..... "
              fi
