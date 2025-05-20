@@ -30,7 +30,7 @@ jobs:
         if: matrix.lint == 'python'
         run: |
           A=$(find . | grep .yml)
-          /usr/bin/yamllint action.yml
+          /usr/bin/yamllint action.yml .github/dependabot.yml
 
       - name: Check yaml(JS)
         if: matrix.lint == 'js'
