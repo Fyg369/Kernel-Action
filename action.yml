@@ -300,7 +300,7 @@ runs:
 
          if [ ${{ inputs.ksu }} = true ]; then
             echo "::group:: Initializing KernelSU"
-            [ -d "KernelSU" ] && rm -rf *KernelSU* && rm -rf drivers/kernelsu
+            [ -d "KernelSU" ] && rm -rf "KernelSU" && rm -rf drivers/kernelsu
             if [ ${{ inputs.ksu-other }} = true ]; then
                 curl -SsL "${{ inputs.ksu-url }}/raw/${{ inputs.ksu-version }}/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
             else
