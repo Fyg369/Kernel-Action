@@ -18,7 +18,7 @@ jobs:
     - name: Mmp CI
       uses: ./
       with:
-          kernel-url: https://github.com/Fyg369/mcd_kernel_oneplus_sdm845
+          kernel-url: https://github.com/Fyj69/kernel_oneplus_sdm845
           kernel-dir: mmp
           kernel-branch: mcd-OOS-R
           config: mcd_ksu_defconfig
