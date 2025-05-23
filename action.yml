@@ -419,7 +419,7 @@ runs:
 
          if [ -d "$HOME/clang/bin" ]; then
              CMD_PATH="$HOME/clang/bin"; CMD_CC="clang"
-             ! grep -qsi "LD *= *ld.lld" Makefile && [ -f "$HOME/clang/bin/ld" ] && rm -vf "$HOME/clang/bin/ld"
+             [ ${{ inputs.aosp-clang }} = false ] && ! grep -qsi "LD *= *ld.lld" Makefile && [ -f "$HOME/clang/bin/ld" ] && rm -vf "$HOME/clang/bin/ld"
              if [ -d "$HOME/gcc-64/bin" ] || [ -d "$HOME/gcc-32/bin" ]; then
                  CMD="CROSS_COMPILE=$HOME/gcc-64/bin/${GCC64}- CROSS_COMPILE_ARM32=$HOME/gcc-32/bin/${GCC32}- CLANG_TRIPLE=aarch64-linux-gnu-"
              fi
