@@ -26,6 +26,7 @@ jobs:
           extra-cmd: LLVM=1
           aosp-gcc: true
           aosp-clang: true
+          android-version: 12
           aosp-clang-version: r416183b
           lxc: true
           lxc-patch: true
