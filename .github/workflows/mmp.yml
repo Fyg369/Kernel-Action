@@ -25,8 +25,8 @@ jobs:
           arch: arm64
           extra-cmd: LLVM=1
           aosp-gcc: true
-          other-clang-url: https://github.com/kdrag0n/proton-clang
-          other-clang-branch: master
+          aosp-clang: true
+          aosp-clang-version: r416183b
           lxc: true
           lxc-patch: true
           nethunter: true
