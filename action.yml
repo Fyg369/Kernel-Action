@@ -45,10 +45,13 @@ inputs:
     description: 'KernelSU function support'
     required: false
     default: false
+  rekernel:
+    required: false
+    default: false
   ksu-version:
     description: 'KernelSU default branch'
     required: false
-    default: main
+    default: "main"
   ksu-other:
     description: 'Using third party kernelsu'
     required: false
@@ -246,14 +249,14 @@ runs:
              download_and_extract "$AOSP_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "$AOSP_GCC_BRANCH"
          elif [ ! -z ${{ inputs.other-gcc64-url }} ] || [ ! -z ${{ inputs.other-gcc32-url }} ]; then
              echo "::group:: Downloading Third party GCC"
-                     export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
-                     export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
-                     download_and_extract "$OTHER_GCC64_URL" "gcc-aarch64" "$HOME/gcc-64" "${{ inputs.other-gcc64-branch }}"
-                     download_and_extract "$OTHER_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "${{ inputs.other-gcc32-branch }}"
+                 export OTHER_GCC64_URL=${{ inputs.other-gcc64-url }}
+                 export OTHER_GCC32_URL=${{ inputs.other-gcc32-url }}
+                 download_and_extract "$OTHER_GCC64_URL" "gcc-aarch64" "$HOME/gcc-64" "${{ inputs.other-gcc64-branch }}"
+                 download_and_extract "$OTHER_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "${{ inputs.other-gcc32-branch }}"
          fi
          if [ -d $HOME/gcc-64 ] || [ -d $HOME/gcc-32 ]; then
-              [ ! -d $HOME/gcc-64/bin/ ] && mv $HOME/gcc-64/*/* $HOME/gcc-64/
-              [ ! -d $HOME/gcc-32/bin/ ] && mv $HOME/gcc-32/*/* $HOME/gcc-32/
+             [ ! -d $HOME/gcc-64/bin/ ] && mv $HOME/gcc-64/*/* $HOME/gcc-64/
+             [ ! -d $HOME/gcc-32/bin/ ] && mv $HOME/gcc-32/*/* $HOME/gcc-32/
          fi
          echo "::endgroup::"
 
@@ -332,6 +335,12 @@ runs:
             echo "::endgroup::"
          fi
 
+         if [ ${{ inputs.rekernel }} = true ]; then
+             echo "::group:: Initalizing Re-Kernel"
+             curl -SsL https://github.com/dabao1955/kernel_build_action/raw/main/rekernel/patch.sh | bash
+             echo "::endgroup::"
+         fi
+
          if [ -f scripts/dtc/libfdt/mkdtboimg.py ]; then
             if grep python2 scripts/Makefile.lib >/dev/null; then
                 echo "::group:: Using mkdtboimg Python3 version instead of Python2 version"
@@ -396,10 +405,10 @@ runs:
          fi
 
          if [ ${{ inputs.kvm }} = true ]; then
-             echo "CONFIG_VIRTUALIZATION=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-             echo "CONFIG_KVM=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-             echo "CONFIG_KVM_MMIO=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-             echo "CONFIG_KVM_ARM_HOST=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+            echo "CONFIG_VIRTUALIZATION=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+            echo "CONFIG_KVM=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+            echo "CONFIG_KVM_MMIO=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
+            echo "CONFIG_KVM_ARM_HOST=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
          fi
 
          if [ ${{ inputs.lxc }} = true ]; then
