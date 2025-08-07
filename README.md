@@ -3,7 +3,7 @@
   <h3><i>Powered By GitHub Actions</i></h3>
 </div>
 
-A Workflow to build Android Kernel automatically
+A workflow to automatically build an Android kernel
 
 [![](https://img.shields.io/github/actions/workflow/status/dabao1955/kernel_build_action/main.yml?style=for-the-badge&color=fee4d0&logo=githubactions&logoColor=fee4d0)](https://github.com/dabao1955/kernel_build_action/actions/workflows/main.yml)
 [![](https://img.shields.io/github/issues/dabao1955/kernel_build_action?style=for-the-badge&color=fee4d0&logo=files&logoColor=fee4d0)](https://github.com/dabao1955/kernel_build_action/issues)
@@ -16,7 +16,7 @@ A Workflow to build Android Kernel automatically
 
 
 > [!IMPORTANT]
-> This workflow is universal. You need to have a certain foundation in writing github workflows and a little knowledge of the Android kernel to use this.
+> This workflow is universal. You need to have a certain understanding in writing github workflows and a little knowledge of the Android kernel to use this.
 
 ## How to use?
 - First, you need to determine the kernel source code and configuration files.
@@ -75,30 +75,31 @@ Or use the [preset workflow file](https://github.com/dabao1955/kernel_build_acti
 | ksu-version | false | KernelSU version | v0.9.5 |
 | ksu-lkm(may not build successfully for non-GKI devices) | false | Build KernelSU as a linux kernel module | true |
 | ksu-other | false | | false |
-| ksu-url | false | Ude 3rd KernelSU | https://github.com/xxx/KernelSU/ |
-| bbrplus | false | | false |
-| disable-lto | false | LTO is used to optimize the kernel but can sometimes cause errors. | false |
+| ksu-url | false | Use 3rd KernelSU | https://github.com/xxx/KernelSU/ |
+| rekernel | false | Enable Re-Kernel support | true |
+| disable-lto | false | Disable [Link Time Optimization](https://llvm.org/docs/LinkTimeOptimization.html) | false |
 | disable_fst | false | Disable fstack-protector-strong (clang-r383902b) | false |
 | disable_cc_werror | false | This is used to fix kernels that do not support or have Kprobes disabled, addressing the issue where KernelSU fails to detect the variable indicating Kprobes is enabled and throws a warning. | false |
-| kprobes | false | Enable kprobes to config | false |
 | lxc | false | Enable LXC and docker to config | false | 
- | lxc-patch | false | Add patch avoid not booting after enable lxc | false | 
- | nethunter | false | Enable Kali nethunter | false | 
- | nethunter-patch | false | | false |
+| lxc-patch | false | Add patch avoid not booting after enable lxc | false | 
+| nethunter | false | Enable Kali nethunter | false | 
+| nethunter-patch | false | | false |
 | kvm | false | | false |
+| bbrplus | false | | false |
+| kprobes | false | Enable kprobes to config | false |
 | ccache | false | Enable ccache(Only valid when compiled with clang) | false |
 | aosp-gcc | false | Use aosp-gcc to compile the kernel or assist in compiling the kernel (when aosp-clang is enabled) | false |
-| other-gcc32-url | false | Please fill in the download link of other gcc32 in this option. Supports .xz, .tar, .zip, .tar.xz and .git formats | https://github.com/username/gcc |
+| other-gcc32-url | false | Please fill in the download link of other gcc32 in this option. Supports .xz, .zip, .tar and .git formats | https://github.com/username/gcc |
 | other-gcc32-branch | false | | main |
-| other-gcc64-url | false | Please fill in the download link of other gcc64 in this option. Supports .xz, .tar, .zip, .tar.xz and .git formats | https://github.com/username/gcc |
+| other-gcc64-url | false | Please fill in the download link of other gcc64 in this option. Supports .xz, .zip, .tar and .git formats | https://github.com/username/gcc |
 | other-gcc64-branch | false | | main |
 | aosp-clang | false | Compile the kernel using aosp-clang | false |
 | aosp-clang-version | false | please search for them according to your own needs at [official website](https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86) and choose the appropriate clang according to the Android system version instead of blindly choosing `r383902` | r383902 |
-| other-clang-url | false | Please fill in the download link of other clang in this option. Supports .xz, .tar, .zip, .tar.xz and .git formats | https://github.com/kdrag0n/proton-clang |
+| other-clang-url | false | Please fill in the download link of other clang in this option. Supports .xz, .zip, .tar and .git formats | https://github.com/kdrag0n/proton-clang |
 | other-clang-branch | false | | 10.0|
 | anykernel3 | false | Package the compiled kernel using AnyKernel3. If this option is disabled, You need to fill `bootimg-url`. | false |
 | anykernel3-url | false | 3rdparty AnyKernel3 url | https://github.com/username/AnyKernel3 |
-| release | flase | After the kernel compilation is completed, it will be automatically published to the releases page | true |
+| release | false | After the kernel compilation is completed, it will be automatically published to the releases page | true |
 | access-token | false | Please fill it if you want to release kernel | ghp_xxxxxx |
 | bootimg-url | false | A URL that can download the local boot.img | https://127.0.0.1/boot.img |
 | extra-cmd | false | Compile the kernel with extra options, such as LD=ld.lld | AS=llvm-as |
@@ -113,7 +114,7 @@ You should disable aosp-clang and android-ndk options to use it.
 ### Why KernelSU version built with this action is still v0.9.5？
 See [KernelSU 's release note](https://github.com/tiann/KernelSU/releases/tag/v1.0.0) for more details.
 
-### Why the workflow exits with a code with an error value of some nubmer？
+### Why the workflow exits with a code with an error value of some number？
 - If you get an error while downloading the toolchain or pulling the source code, please check whether your option or source code address is legitimate.
 - If you encounter problems during compilation, consider replacing the source code or replacing the compiler.
 
