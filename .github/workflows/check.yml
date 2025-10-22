@@ -1,6 +1,12 @@
 name: Lint Check
 on:
-  workflow_call:
+  pull_request:
+  push:
+    branches: main
+    paths:
+      - 'actuon.yml'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/check.yml'
 
 jobs:
   yaml-check:
@@ -12,9 +18,6 @@ jobs:
       matrix:
         lint: [python, js]
     steps:
-
-      - name: Checkout Repo
-        uses: actions/checkout@v4
 
       - name: Setup (Python)
         if: matrix.lint == 'python'
@@ -48,7 +51,7 @@ jobs:
         lint: [shellcheck, shfmt]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: ShellCheck lint
         if: matrix.lint == 'shellcheck'
         uses: ludeeus/action-shellcheck@2.0.0
