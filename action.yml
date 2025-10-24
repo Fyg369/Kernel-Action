@@ -478,7 +478,6 @@ runs:
         if [ "${{ inputs.anykernel3 }}" == "false" ]; then
             echo "::group::Packaging boot.img"
 
-            mkdir split
             cd split
             HOST_ARCH=$(dpkg --print-architecture)
             case "${HOST_ARCH}" in
@@ -494,12 +493,12 @@ runs:
                 find ../out/arch/${{ inputs.arch }}/boot -name "Image" -exec cp -v {} kernel \; 2>/dev/null
             else
                 if [ -f dtb ]; then
-                    find ../out/arch/${{ inputs.arch }}/boot -name "Image.*-dtb" -exec cp -v {} kernel \; 2>/dev/null
+                    find ../out/arch/${{ inputs.arch }}/boot -name "Image.*-dtb" ! -name "*-*" -exec cp -v {} kernel \; 2>/dev/null
                 else
                     find ../out/arch/${{ inputs.arch }}/boot -name "Image.*" ! -name "*-*" -exec cp -v {} kernel \; 2>/dev/null
                 fi
             fi
-            ./magiskboot repack boot.img
+            ./magiskboot repack boot.img || error "Failed to repack boot.img"
             rm -f boot.img
             mkdir -p ../../../build
             find . -name "*.img" -exec mv -v {} ../../../build/boot.img \;
@@ -524,8 +523,9 @@ runs:
                 cp out/arch/${{ inputs.arch }}/boot/Image AnyKernel3/ -rv
             fi
 
-            [ -f out/arch/${{ inputs.arch }}/boot/dtb.img ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtb.img AnyKernel3/ 2>/dev/null || \
-            [ -f out/arch/${{ inputs.arch }}/boot/dtb ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtb AnyKernel3/ 2>/dev/null
+            [ -f out/arch/${{ inputs.arch }}/boot/dtbo.img ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtbo.img AnyKernel3/
+            [ -f out/arch/${{ inputs.arch }}/boot/dtb.img ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtb.img AnyKernel3/ || \
+            [ -f out/arch/${{ inputs.arch }}/boot/dtb ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtb AnyKernel3/
 
             rm -rf -v AnyKernel3/.git* AnyKernel3/README.md
             mkdir -p -v ../../build
@@ -566,6 +566,6 @@ runs:
         files: build/*
         make_latest: true
         body: |
-            config: ${{ inputs.config }}
-            branch: ${{ inputs.kernel-branch }}
-            source: ${{ inputs.kernel-url }}
+          - Config: ${{ inputs.config }}
+          - Branch: ${{ inputs.kernel-branch }}
+          - Source: ${{ inputs.kernel-url }}
