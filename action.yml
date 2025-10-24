@@ -343,7 +343,7 @@ runs:
                 fi
             fi
             echo "::endgroup::"
-         fi
+        fi
 
         if [ "${{ inputs.rekernel }}" == "true" ]; then
             echo "::group::Initializing Re-Kernel"
