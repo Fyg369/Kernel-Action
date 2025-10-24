@@ -206,7 +206,14 @@ runs:
         elif [ -n "${{ inputs.other-clang-url }}" ]; then
             echo "::group::Downloading Third-party Clang"
             download_and_extract "${{ inputs.other-clang-url }}" "clang" "$HOME/clang" "${{ inputs.other-clang-branch }}"
-            [ -d "$HOME/clang/bin" ] || for dir in "$HOME/clang"/*/*; do [ -d "$dir" ] && { mv "$dir"/* "$HOME/clang/" 2>/dev/null || true; break; }; done
+            if [ ! -d "$HOME/clang/bin" ]; then
+                for dir in "$HOME/clang"/*/*; do
+                    if [ -d "$dir" ]; then
+                        mv "$dir"/* "$HOME/clang/" 2>/dev/null || true
+                        break
+                    fi
+                done
+            fi
             if ! ls "$HOME/clang"/*-linux-* &>/dev/null; then
                 echo "Binutils not found in clang directory. Downloading AOSP GCC"
                 export NEED_GCC=1
@@ -239,8 +246,27 @@ runs:
             fi
             echo "::endgroup::"
         fi
-        [ -d "$HOME/gcc-64" ] && [ ! -d "$HOME/gcc-64/bin" ] && for dir in "$HOME/gcc-64"/*/*; do [ -d "$dir" ] && { mv "$dir"/* "$HOME/gcc-64/" 2>/dev/null || true; break; }; done
-        [ -d "$HOME/gcc-32" ] && [ ! -d "$HOME/gcc-32/bin" ] && for dir in "$HOME/gcc-32"/*/*; do [ -d "$dir" ] && { mv "$dir"/* "$HOME/gcc-32/" 2>/dev/null || true; break; }; done
+
+        if [ -d "$HOME/gcc-64" ]; then
+            if [ ! -d "$HOME/gcc-64/bin" ]; then
+                for dir in "$HOME/gcc-64"/*/*; do
+                    if [ -d "$dir" ]; then
+                        mv "$dir"/* "$HOME/gcc-64/" 2>/dev/null || true
+                        break
+                    fi
+                done
+            fi
+        fi
+        if [ -d "$HOME/gcc-32" ]; then
+            if [ ! -d "$HOME/gcc-32/bin" ]; then
+                for dir in "$HOME/gcc-32"/*/*; do
+                    if [ -d "$dir" ]; then
+                        mv "$dir"/* "$HOME/gcc-32/" 2>/dev/null || true
+                        break
+                    fi
+                done
+            fi
+        fi
 
         echo "::group::Pulling Kernel Source"
         git clone --recursive -b "${{ inputs.kernel-branch }}" --depth="${{ inputs.depth }}" "${{ inputs.kernel-url }}" "kernel/${{ inputs.kernel-dir }}"
@@ -277,6 +303,7 @@ runs:
         VERSION=$(grep -E '^VERSION = ' Makefile | awk '{print $3}')
         PATCHLEVEL=$(grep -E '^PATCHLEVEL = ' Makefile | awk '{print $3}')
         SUBLEVEL=$(grep -E '^SUBLEVEL = ' Makefile | awk '{print $3}')
+
         NONGKI=false
         if [ "$VERSION" -lt 5 ] 2>/dev/null || { [ "$VERSION" -eq 5 ] 2>/dev/null && [ "$PATCHLEVEL" -lt 10 ] 2>/dev/null; }; then
             NONGKI=true
@@ -320,7 +347,12 @@ runs:
 
         if [ "${{ inputs.rekernel }}" == "true" ]; then
             echo "::group::Initializing Re-Kernel"
-            curl -SsL https://github.com/dabao1955/kernel_build_action/raw/main/rekernel/patch.sh | bash
+            if curl -sSLf "${{ github.action_path }}/rekernel/patch.sh" -o /tmp/rekernel_patch.sh; then
+                bash /tmp/rekernel_patch.sh || error "Failed to apply Re-Kernel patches"
+                rm -f /tmp/rekernel_patch.sh
+            else
+                error "Failed to download Re-Kernel patch script"
+            fi
             echo "::endgroup::"
         fi
 
@@ -497,8 +529,8 @@ runs:
                 cp out/arch/${{ inputs.arch }}/boot/Image AnyKernel3/ -rv
             fi
 
-            [ -f out/arch/${{ inputs.arch }}/boot/dtbo.img ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtbo.img AnyKernel3/
-            [ -f out/arch/${{ inputs.arch }}/boot/dtb.img ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtb.img AnyKernel3/ || { [ -f out/arch/${{ inputs.arch }}/boot/dtb ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtb AnyKernel3/; }
+            [ -f out/arch/${{ inputs.arch }}/boot/dtb.img ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtb.img AnyKernel3/ 2>/dev/null || \
+            [ -f out/arch/${{ inputs.arch }}/boot/dtb ] && cp -rv out/arch/${{ inputs.arch }}/boot/dtb AnyKernel3/ 2>/dev/null
 
             rm -rf -v AnyKernel3/.git* AnyKernel3/README.md
             mkdir -p -v ../../build
