@@ -478,6 +478,7 @@ runs:
         if [ "${{ inputs.anykernel3 }}" == "false" ]; then
             echo "::group::Packaging boot.img"
 
+            mkdir split
             cd split
             HOST_ARCH=$(dpkg --print-architecture)
             case "${HOST_ARCH}" in
