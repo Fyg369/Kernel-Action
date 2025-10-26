@@ -19,6 +19,9 @@ jobs:
         lint: [python, js]
     steps:
 
+      - name: Checkout Repo
+        uses: actions/checkout@v5
+
       - name: Setup (Python)
         if: matrix.lint == 'python'
         run: |
