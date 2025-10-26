@@ -390,7 +390,7 @@ runs:
          fi
 
          if [ "${{ inputs.disable_fst }}" == "true" ]; then
-             grep -q "CONFIG_CC_STACKPROTECTOR_STRONG=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || sed -i 's/CONFIG_CC_STACKPROTECTOR_STRONG=y/# CONFIG_CC_STACKPROTECTOR_STRONG is not set/g' arch/${{ inputs.arch }}/configs/${{ inputs.config }} 
+             grep -q "CONFIG_CC_STACKPROTECTOR_STRONG=y" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}" || sed -i 's/CONFIG_CC_STACKPROTECTOR_STRONG=y/# CONFIG_CC_STACKPROTECTOR_STRONG is not set/g' arch/${{ inputs.arch }}/configs/${{ inputs.config }}
          fi
 
          if [ "${{ inputs.disable_cc_werror }}" == "true" ]; then
